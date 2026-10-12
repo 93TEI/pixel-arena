@@ -1,0 +1,44 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+.DS_Store
+
+# Local assets and captured media
+public/assets/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.avif
+*.svg
+*.ico
+*.bmp
+*.tif
+*.tiff
+*.mp4
+*.webm
+*.mov
+*.zip
+*.tar
+*.gz
+
+# Local documentation, work logs and tool configuration
+*.[mM][dD]
+*.markdown
+docs/
+notes/
+artifacts/
+test-results/
+playwright-report/
+.openai/
+.openai-local/
+.codex/
+.agents/
+.claude/
+.local/
+.env
+.env.*
+*.log

@@ -1,0 +1,166 @@
+:root { font-family: 'Noto Sans KR', system-ui, sans-serif; color: #e8e9ee; background: #101116; font-synthesis: none; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 50% 0, #23242d 0, #101116 64%); }
+button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible { outline: 2px solid #eed074; outline-offset: 4px; }
+button:disabled { cursor: default; opacity: .35; }
+[hidden] { display: none !important; }
+.arena-shell { width: min(1140px, calc(100% - 64px)); margin: 0 auto; padding: 38px 0 22px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark { height: 33px; width: 33px; border: 3px solid #f5d174; border-radius: 50%; position: relative; background: linear-gradient(transparent 44%, #f5d174 44%, #f5d174 55%, transparent 55%); }
+.brand-mark::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #191a21; border: 3px solid #f5d174; position: absolute; left: 6px; top: 6px; }
+h1 { margin: 0; font-family: 'Barlow Condensed', Impact, sans-serif; font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: 1px; }
+h1 span { color: #f0ce77; }
+.brand p { margin: 7px 0 0; color: #8d8f9d; font-size: 10px; letter-spacing: .6px; }
+.build-tag { display: flex; align-items: center; gap: 9px; font: 600 12px 'Barlow Condensed', sans-serif; letter-spacing: 1.6px; color: #9698a5; }
+.build-tag i, .live-dot { display: inline-block; width: 5px; height: 5px; background: #b7d8a1; border-radius: 50%; }
+.build-tag span { margin-left: 8px; border-left: 1px solid #3b3c44; padding-left: 15px; color: #e0c275; }
+.arena-frame { border: 1px solid #42434d; border-radius: 6px; overflow: hidden; background: #1c1d25; box-shadow: 0 24px 65px #0005; }
+.match-bar { height: 48px; padding: 0 23px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3b3c46; }
+.match-bar > div { display: flex; align-items: center; gap: 12px; }
+.match-bar strong { font: 600 15px 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
+.match-type { padding-left: 13px; border-left: 1px solid #444550; font: 500 11px 'Barlow Condensed', sans-serif; letter-spacing: 1.5px; color: #9092a2; }
+.match-tools time { font: 600 16px 'Barlow Condensed', sans-serif; color: #b7b9c3; font-variant-numeric: tabular-nums; }
+.quiet-button { background: transparent; border: 1px solid #454752; border-radius: 4px; padding: 7px 12px; font-size: 11px; }
+.quiet-button:hover:not(:disabled) { border-color: #8d8e9a; background: #ffffff08; }
+.quiet-button kbd { padding: 0; border: none; font-size: 9px; color: #787b8b; margin-left: 7px; background: none; box-shadow: none; }
+.game-stage { position: relative; width: 100%; aspect-ratio: 8 / 5; overflow: hidden; background: #28272c; }
+#game-mount { position: absolute; inset: 0; width: 100%; height: 100%; }
+#game-mount:focus { outline: none; }
+#game-mount canvas { display: block; image-rendering: pixelated; width: 100% !important; height: 100% !important; touch-action: none; }
+.game-overlay { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: #11131ab3; backdrop-filter: blur(3px); }
+.selection-panel { text-align: center; padding: 20px; width: 690px; max-width: 95%; }
+.eyebrow { font: 600 12px 'Barlow Condensed', sans-serif; letter-spacing: 3px; color: #eccb7c; margin: 0 0 10px; }
+h2 { margin: 0; font-size: 26px; letter-spacing: -1px; font-weight: 800; }
+.panel-copy { color: #a8aab8; font-size: 12px; margin: 11px 0 24px; }
+.fighter-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.fighter-card { display: flex; flex-direction: column; align-items: flex-start; text-align: left; position: relative; border: 1px solid #6d5146; border-radius: 6px; padding: 21px; background: linear-gradient(150deg, #342824, #202127); overflow: hidden; transition: border-color .15s, transform .15s; }
+.fighter-card.water { border-color: #435e6d; background: linear-gradient(150deg, #23323b, #202127); }
+.fighter-card:hover { transform: translateY(-3px); border-color: #eda264; }
+.fighter-card.water:hover { border-color: #91d4e6; }
+.fighter-emblem { font-weight: 800; color: #e39769; font-size: 37px; margin-bottom: 17px; line-height: 1; text-shadow: 3px 3px #0005; }
+.water .fighter-emblem { color: #90c7dc; }
+.fighter-portrait { display: grid; place-items: center; width: 62px; height: 62px; margin: -6px 0 12px; }
+.fighter-thumbnail { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.fighter-fallback { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #aaa8a5; background: #36363e; color: #c8c8cc; border-radius: 8px; font-size: 34px; }
+.fighter-card.electric { border-color: #807036; background: linear-gradient(150deg, #3b3520, #202127); }
+.fighter-card.electric:hover { border-color: #f4dc68; }
+.electric .fighter-number { color: #e3cf7f; }
+.opponent-choice { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 15px; color: #b5b8c5; font-size: 11px; }
+.opponent-choice select { font: inherit; color: #e5e7ee; background: #222630; border: 1px solid #525869; border-radius: 4px; padding: 5px 24px 5px 9px; }
+.opponent-choice select:focus-visible { outline: 2px solid #eed074; outline-offset: 2px; }
+.fighter-number { font: 600 10px 'Barlow Condensed', sans-serif; letter-spacing: 2px; color: #c89473; }
+.water .fighter-number { color: #84b7cd; }
+.fighter-card strong { font-size: 24px; margin: 4px 0 6px; }
+.fighter-description { font-size: 11px; color: #a2a4b0; }
+.choose-label { display: flex; justify-content: space-between; width: 100%; border-top: 1px solid #ffffff14; margin-top: 20px; padding-top: 11px; color: #d9dbe1; font-size: 11px; }
+.selection-hint { color: #8e909f; font-size: 10px; margin: 10px 0 0; }
+.status-panel { text-align: center; background: #1d1f29ee; border: 1px solid #535361; border-radius: 8px; padding: 36px 42px; box-shadow: 0 15px 70px #0007; }
+.status-panel > p:not(.eyebrow) { color: #a4a7b5; font-size: 12px; margin: 16px 0 24px; }
+.status-actions { display: flex; justify-content: center; gap: 9px; }
+.primary-button { background: #efce7e; color: #242126; border: 1px solid #efce7e; padding: 10px 19px; font-weight: 700; font-size: 12px; border-radius: 4px; }
+.primary-button:hover { background: #ffdfa0; }
+.arena-bottom { display: flex; justify-content: space-between; align-items: center; height: 47px; padding: 0 24px; border-top: 1px solid #3e4049; }
+.arena-bottom > span { display: flex; gap: 9px; align-items: center; }
+.arena-bottom strong { font-size: 12px; }
+.arena-bottom small { font: 600 10px 'Barlow Condensed', sans-serif; color: #898b9b; letter-spacing: 1px; }
+.player-dot, .enemy-dot { width: 6px; height: 6px; border-radius: 50%; background: #e2c479; }
+.enemy-dot { background: #9fabbc; }
+.arena-caption { color: #858897; font-size: 10px; }
+.controls-footer { display: flex; align-items: center; gap: 27px; padding: 22px 3px 0; }
+.control-group { display: flex; align-items: center; gap: 9px; font-size: 11px; color: #b0b2c0; }
+.control-group small { color: #747787; font-size: 10px; }
+.key-cluster { display: flex; gap: 3px; }
+kbd { font: 500 11px 'Barlow Condensed', system-ui, sans-serif; display: inline-flex; justify-content: center; align-items: center; min-width: 22px; height: 23px; padding: 0 6px; border: 1px solid #454752; border-radius: 4px; background: #23242e; color: #cbccd5; box-shadow: 0 2px #0004; }
+.footer-note { margin-left: auto; font: 500 11px 'Barlow Condensed', sans-serif; color: #606474; letter-spacing: 1.5px; }
+.prototype-note { margin: 26px 0 0; text-align: center; color: #656877; font-size: 9px; line-height: 1.7; }
+.touch-controls { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; user-select: none; -webkit-user-select: none; }
+.joystick { position: absolute; left: 22px; bottom: 21px; width: 106px; height: 106px; border: 1px solid #d7defb38; border-radius: 50%; background: #14182438; pointer-events: auto; touch-action: none; }
+.joystick::before, .joystick::after { content: ''; position: absolute; background: #d7defb22; left: 49%; top: 18%; width: 1px; height: 64%; }
+.joystick::after { transform: rotate(90deg); }
+.joystick span { position: absolute; width: 42px; height: 42px; left: calc(50% - 21px); top: calc(50% - 21px); border: 1px solid #d7defb70; background: #8790a966; border-radius: 50%; transform: translate(var(--stick-x, 0px), var(--stick-y, 0px)); }
+.touch-actions { position: absolute; right: 22px; bottom: 25px; display: flex; align-items: end; gap: 10px; }
+.touch-actions button { pointer-events: auto; touch-action: none; width: 58px; height: 58px; border-radius: 50%; border: 1px solid #d7defb66; background: #1c2238a6; font-weight: 700; font-size: 12px; }
+.touch-actions .touch-ranged { width: 68px; height: 68px; background: #91754788; border-color: #f1ce8277; }
+.touch-actions .touch-dodge { width: 47px; height: 47px; margin-bottom: 42px; font-size: 10px; }
+.touch-actions .is-held { background: #cbb579bb; border-color: #ffe0a0; }
+.touch-actions .touch-special { position: absolute; width: 53px; height: 53px; right: 67px; bottom: 77px; background: #493e7188; border-color: #b9a4e477; font-size: 10px; }
+.touch-actions button small { display: block; font-size: 8px; font-weight: 400; margin-top: 2px; opacity: .75; }
+.combat-hud { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 24px; border-top: 1px solid #343640; background: #171a22; font-size: 10px; min-height: 49px; }
+.energy-panel { width: 140px; flex-shrink: 0; }
+.energy-panel > span { display: flex; justify-content: space-between; font: 10px ui-monospace, monospace; letter-spacing: 1px; color: #969cad; }
+.energy-panel b { color: #d9e7ee; }
+.energy-track { height: 4px; background: #333946; margin-top: 5px; overflow: hidden; border-radius: 2px; }
+.energy-track i { display: block; width: 100%; height: 100%; background: #88c6d8; }
+.action-phase { min-width: 100px; color: #8eaaa1; }
+.action-phase[data-phase="windup"] { color: #ead48b; }
+.action-phase[data-phase="active"] { color: #a2d9ed; }
+.action-phase[data-phase="recovery"] { color: #b7a1ca; }
+.cooldown-item { display: flex; align-items: center; gap: 7px; color: #a0a5b5; }
+.cooldown-item b { font-size: 10px; color: #d0d2de; min-width: 25px; font-weight: 500; }
+.cooldown-item kbd { height: 19px; min-width: 19px; font-size: 10px; }
+.demo-banner { position: absolute; z-index: 4; top: 11px; left: 50%; transform: translateX(-50%); display: none; align-items: center; gap: 13px; white-space: nowrap; padding: 7px 10px 7px 14px; color: #ece6d2; border: 1px solid #7e735777; border-radius: 4px; background: #1c1e27df; font-size: 11px; }
+.demo-banner button { border: 1px solid #96814f; border-radius: 3px; background: #413822; padding: 5px 8px; font-size: 10px; }
+[data-demo="true"][data-started="true"] .demo-banner { display: flex; }
+[data-demo="true"] .touch-controls { visibility: hidden; }
+[data-started="false"] .touch-controls, [data-paused="true"] .touch-controls, [data-finished="true"] .touch-controls { visibility: hidden; }
+@media (pointer: coarse) { .touch-controls { display: block; } .controls-footer { display: none; } .prototype-note { margin-top: 14px; } }
+@media (max-width: 850px) { .arena-shell { width: calc(100% - 30px); padding-top: 22px; } .page-header { margin-bottom: 18px; } .build-tag { font-size: 10px; } .controls-footer { gap: 18px; flex-wrap: wrap; } .footer-note { display: none; } .selection-panel { transform: scale(.85); } }
+@media (max-width: 580px) { .arena-shell { width: 100%; padding-top: 16px; } .page-header { padding: 0 16px; } h1 { font-size: 24px; } .brand-mark { display: none; } .build-tag { display: none; } .arena-frame { border-radius: 0; border-left: 0; border-right: 0; } .game-stage { aspect-ratio: 8 / 5; } .match-bar { padding: 0 12px; height: 39px; } .match-type { font-size: 9px; } .arena-bottom { padding: 0 14px; height: 38px; } .arena-caption { display: none !important; } .selection-panel { transform: none; padding: 12px; max-width: 100%; } h2 { font-size: 20px; } .eyebrow { font-size: 10px; margin-bottom: 6px; } .panel-copy { margin: 8px 0 13px; font-size: 10px; } .fighter-options { gap: 10px; max-width: 320px; margin: auto; } .fighter-card { padding: 13px; } .fighter-emblem { display: none; } .fighter-card strong { font-size: 20px; } .fighter-description { font-size: 10px; } .choose-label { margin-top: 11px; padding-top: 8px; font-size: 10px; } .selection-hint { margin-top: 7px; font-size: 9px; } .controls-footer { padding: 18px 16px 0; gap: 14px; } .control-group { font-size: 10px; gap: 5px; } .prototype-note { padding: 0 20px; } .status-panel { padding: 25px; } .joystick { width: 85px; height: 85px; left: 14px; bottom: 12px; } .touch-actions { right: 12px; bottom: 14px; gap: 6px; } .touch-actions button { width: 44px; height: 44px; font-size: 10px; } .touch-actions .touch-ranged { width: 51px; height: 51px; } .touch-actions .touch-dodge { width: 37px; height: 37px; margin-bottom: 34px; } }
+@media (max-height: 560px) and (orientation: landscape) { .arena-shell { padding: 0; width: min(100%, calc((100dvh - 70px) * 1.6)); } .page-header, .controls-footer, .prototype-note { display: none; } .match-bar { height: 34px; } .arena-bottom { height: 34px; } .arena-frame { border-radius: 0; } .selection-panel { transform: scale(.7); } .status-panel { padding: 20px 35px; } }
+@media (max-width: 850px) { .combat-hud { padding: 10px 15px; gap: 12px; } .energy-panel { width: 105px; } .action-phase { min-width: 80px; } .cooldown-item { gap: 5px; font-size: 9px; } .controls-footer { gap: 15px; } }
+@media (max-width: 580px) { .fighter-thumbnail { position: absolute; right: 9px; top: 12px; width: 35px; height: 35px; margin: 0; } .fighter-number { font-size: 8px; letter-spacing: 1px; } .selection-panel { padding: 8px 12px; } .selection-panel h2 { font-size: 17px; } .panel-copy { margin: 5px 0 8px; font-size: 9px; } .fighter-card { padding: 10px; } .fighter-card strong { font-size: 18px; margin-top: 8px; } .fighter-description { font-size: 9px; } .choose-label { margin-top: 8px; } .selection-hint { font-size: 8px; } .match-bar { padding: 0 9px; } .match-bar > div { gap: 7px; } .match-type { display: none; } .demo-button { padding: 5px 7px; font-size: 9px; } .combat-hud { padding: 9px 12px; flex-wrap: wrap; gap: 8px 14px; min-height: 61px; } .energy-panel { width: 100px; } .action-phase { margin-left: auto; min-width: auto; } .cooldown-item { font-size: 9px; } .cooldown-item b { font-size: 9px; } .dodge-status { margin-left: auto; } .cooldown-item kbd { display: none; } .touch-actions .touch-special { width: 39px; height: 39px; bottom: 59px; right: 49px; font-size: 9px; } .demo-banner { max-width: 95%; width: max-content; gap: 6px; padding: 5px 7px; top: 7px; font-size: 8px; white-space: normal; } .demo-banner button { white-space: nowrap; font-size: 8px; } }
+@media (max-height: 560px) and (orientation: landscape) { .arena-shell { width: min(100%, calc((100dvh - 112px) * 1.6)); } .combat-hud { min-height: 41px; padding: 6px 12px; flex-wrap: nowrap; gap: 8px; } .energy-panel { width: 86px; } .action-phase { min-width: 64px; font-size: 9px; } .cooldown-item kbd, .dodge-status { display: none; } .selection-panel { transform: scale(.6); } .demo-button { font-size: 9px; padding: 5px 7px; } .match-type { display: none; } }
+
+@media (max-width: 850px) {
+  .selection-panel { transform: none; }
+  .combat-hud .energy-panel { width: 85px; }
+  .combat-hud .action-phase { min-width: 75px; }
+  .melee-status b { display: none; }
+}
+@media (max-width: 580px) {
+  .selection-panel { padding: 8px; }
+  .fighter-options { gap: 6px; max-width: 430px; }
+  .fighter-card { padding: 8px; min-width: 0; align-items: center; text-align: center; }
+  .fighter-portrait { width: 31px; height: 31px; margin: 0 0 4px; }
+  .fighter-thumbnail { position: static; width: 100%; height: 100%; margin: 0; }
+  .fighter-fallback { width: 28px; height: 28px; font-size: 23px; border-radius: 5px; }
+  .fighter-number { font-size: 7px; letter-spacing: .5px; white-space: nowrap; }
+  .fighter-card strong { font-size: 16px; margin: 3px 0; }
+  .fighter-description { font-size: 8px; white-space: nowrap; }
+  .choose-label { display: none; }
+  .opponent-choice { margin-top: 7px; font-size: 9px; }
+  .opponent-choice select { padding: 3px 18px 3px 7px; }
+  .selection-hint { margin-top: 5px; }
+  .touch-actions button { font-size: 9px; }
+}
+@media (max-width: 360px) {
+  .selection-panel .panel-copy { display: none; }
+  .selection-panel h2 { margin-bottom: 7px; }
+  .selection-panel .eyebrow { font-size: 8px; margin-bottom: 3px; }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .selection-panel { transform: none; padding: 9px 13px; width: 100%; max-width: 100%; }
+  .selection-panel .eyebrow { font-size: 9px; margin-bottom: 4px; }
+  .selection-panel h2 { font-size: 18px; }
+  .selection-panel .panel-copy { font-size: 9px; margin: 5px 0 9px; }
+  .fighter-options { gap: 8px; }
+  .fighter-card { padding: 10px; min-width: 0; }
+  .fighter-portrait { width: 36px; height: 36px; margin: 0 0 7px; }
+  .fighter-thumbnail { position: static; width: 100%; height: 100%; margin: 0; }
+  .fighter-fallback { width: 32px; height: 32px; font-size: 26px; }
+  .fighter-number { font-size: 7px; letter-spacing: .5px; white-space: nowrap; }
+  .fighter-card strong { font-size: 18px; margin: 3px 0; }
+  .fighter-description { font-size: 8px; white-space: nowrap; }
+  .choose-label { display: none; }
+  .opponent-choice { margin-top: 8px; font-size: 10px; }
+  .opponent-choice select { padding: 3px 18px 3px 7px; }
+  .selection-hint { font-size: 8px; margin-top: 6px; }
+  .combat-hud { gap: 7px; }
+  .combat-hud .energy-panel { width: 62px; }
+  .combat-hud .action-phase { min-width: 0; font-size: 8px; }
+  .cooldown-item { font-size: 8px; gap: 3px; }
+  .cooldown-item b { font-size: 8px; min-width: 20px; }
+  .melee-status { display: none; }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "pixel-arena",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run tests/battle.test.ts tests/ai.test.ts tests/demo.test.ts tests/pikachu.test.ts",
+    "test:browser": "playwright test",
+    "preview": "vite preview --host 0.0.0.0",
+    "check:publish": "node tools/check-publish.mjs",
+    "assets:local": "node tools/fetch-assets.mjs"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.1.0",
+    "vitest": "^5.0.3",
+    "@playwright/test": "^1.51.0"
+  }
+}
