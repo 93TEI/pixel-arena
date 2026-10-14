@@ -1,0 +1,652 @@
+{
+  "fireBack": {
+    "file": "fireBack.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "columns": 50,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Back.None.png"
+  },
+  "fireFront": {
+    "file": "fireFront.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "columns": 50,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Front.None.png"
+  },
+  "ember": {
+    "file": "ember.png",
+    "frameWidth": 24,
+    "frameHeight": 24,
+    "columns": 9,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Ember.None.png"
+  },
+  "flame": {
+    "file": "flame.png",
+    "frameWidth": 54,
+    "frameHeight": 54,
+    "columns": 12,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Flamethrower.None.png"
+  },
+  "fireBall": {
+    "file": "fireBall.png",
+    "frameWidth": 8,
+    "frameHeight": 8,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Fire_Spin_Fireball.None.png"
+  },
+  "waterWave": {
+    "file": "waterWave.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Aqua_Tail_Wave.None.png"
+  },
+  "waterSplash": {
+    "file": "waterSplash.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Splash.None.png"
+  },
+  "waterDrop": {
+    "file": "waterDrop.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 3,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Drop.None.png"
+  },
+  "waterHit": {
+    "file": "waterHit.png",
+    "frameWidth": 72,
+    "frameHeight": 72,
+    "columns": 31,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Brine_Splashes.None.png"
+  },
+  "bubble": {
+    "file": "bubble.png",
+    "frameWidth": 24,
+    "frameHeight": 24,
+    "columns": 13,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Bubble_Pop_Blue.None.png"
+  },
+  "leaf": {
+    "file": "leaf.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 8,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf.None.png"
+  },
+  "leafSpin": {
+    "file": "leafSpin.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 12,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Leaf_Rotating.None.png"
+  },
+  "leafCharge": {
+    "file": "leafCharge.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "columns": 27,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf_Charge.None.png"
+  },
+  "seed": {
+    "file": "seed.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 1,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Seed_RSE.None.png"
+  },
+  "sprout": {
+    "file": "sprout.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 2,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leech_Seed_Sprout.None.png"
+  },
+  "vine": {
+    "file": "vine.png",
+    "frameWidth": 80,
+    "frameHeight": 80,
+    "columns": 6,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip.Dir1.png"
+  },
+  "vineHit": {
+    "file": "vineHit.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 3,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip_2.None.png"
+  },
+  "solarCharge": {
+    "file": "solarCharge.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "columns": 50,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Charge.None.png"
+  },
+  "solarMote": {
+    "file": "solarMote.png",
+    "frameWidth": 8,
+    "frameHeight": 8,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Particle.None.png"
+  },
+  "absorb": {
+    "file": "absorb.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 9,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Absorb.None.png"
+  },
+  "scratch": {
+    "file": "scratch.png",
+    "frameWidth": 40,
+    "frameHeight": 40,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Scratch.Dir1.png"
+  },
+  "hit": {
+    "file": "hit.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Neutral.None.png"
+  },
+  "heavyHit": {
+    "file": "heavyHit.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "columns": 6,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Super_Effective.None.png"
+  },
+  "electric": {
+    "file": "electric.png",
+    "frameWidth": 120,
+    "frameHeight": 120,
+    "columns": 13,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge.None.png"
+  },
+  "electricHit": {
+    "file": "electricHit.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "columns": 10,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge_Hit.None.png"
+  },
+  "spark": {
+    "file": "spark.png",
+    "frameWidth": 72,
+    "frameHeight": 72,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Spark.None.png"
+  },
+  "charge": {
+    "file": "charge.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Charge_Up.None.png"
+  },
+  "psychicCharge": {
+    "file": "psychicCharge.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 12,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psych_Up.None.png"
+  },
+  "psychicHit": {
+    "file": "psychicHit.png",
+    "frameWidth": 56,
+    "frameHeight": 56,
+    "columns": 30,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Shift_Hit.None.png"
+  },
+  "psychicBack": {
+    "file": "psychicBack.png",
+    "frameWidth": 72,
+    "frameHeight": 72,
+    "columns": 23,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Back.None.png"
+  },
+  "psychicFront": {
+    "file": "psychicFront.png",
+    "frameWidth": 72,
+    "frameHeight": 72,
+    "columns": 23,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Front.None.png"
+  },
+  "psychicWave": {
+    "file": "psychicWave.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 11,
+    "rows": 5,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Wave_Circle_Purple.Dir5.png"
+  },
+  "rock": {
+    "file": "rock.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 8,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Rock_Piece_Rotating.None.png"
+  },
+  "dust": {
+    "file": "dust.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_Brown.None.png"
+  },
+  "steam": {
+    "file": "steam.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_White.None.png"
+  },
+  "dash": {
+    "file": "dash.png",
+    "frameWidth": 112,
+    "frameHeight": 112,
+    "columns": 7,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vacuum_Wave_Dust.None.png"
+  },
+  "impact": {
+    "file": "impact.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Force_Palm_Hit.None.png"
+  },
+  "grassHit": {
+    "file": "grassHit.png",
+    "frameWidth": 40,
+    "frameHeight": 40,
+    "columns": 12,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Hit.None.png"
+  },
+  "waterBody": {
+    "file": "water-Body.png",
+    "frameWidth": 32,
+    "frameHeight": 1,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Body.png"
+  },
+  "waterHead": {
+    "file": "water-Head.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Head.png"
+  },
+  "waterTail": {
+    "file": "water-Tail.png",
+    "frameWidth": 1,
+    "frameHeight": 1,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Tail.png"
+  },
+  "solarBody": {
+    "file": "solar-Body.png",
+    "frameWidth": 32,
+    "frameHeight": 1,
+    "columns": 2,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Body.png"
+  },
+  "solarHead": {
+    "file": "solar-Head.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 2,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Head.png"
+  },
+  "solarTail": {
+    "file": "solar-Tail.png",
+    "frameWidth": 42,
+    "frameHeight": 42,
+    "columns": 2,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Tail.png"
+  },
+  "lightningBody": {
+    "file": "lightning-Body.png",
+    "frameWidth": 32,
+    "frameHeight": 128,
+    "columns": 6,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Body.png"
+  },
+  "lightningHead": {
+    "file": "lightning-Head.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 6,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Head.png"
+  },
+  "lightningTail": {
+    "file": "lightning-Tail.png",
+    "frameWidth": 1,
+    "frameHeight": 1,
+    "columns": 6,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Tail.png"
+  },
+  "psychicBody": {
+    "file": "psychic-Body.png",
+    "frameWidth": 32,
+    "frameHeight": 1,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Body.png"
+  },
+  "psychicHead": {
+    "file": "psychic-Head.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Head.png"
+  },
+  "psychicTail": {
+    "file": "psychic-Tail.png",
+    "frameWidth": 1,
+    "frameHeight": 1,
+    "columns": 14,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Tail.png"
+  }
+}

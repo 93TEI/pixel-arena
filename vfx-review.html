@@ -1,0 +1,6 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>기술 도트 검토 · Pixel Arena</title></head>
+<body><main><header><a href="/">← 아레나</a><h1>기술 도트 검토</h1><p>캐릭터와 같은 화면에서 준비부터 소멸까지 확인합니다.</p></header>
+<section class="controls"><label>포켓몬 <select id="species"></select></label><label>기술 <select id="move"></select></label><label>조건 <select id="variant"><option value="normal">기본</option><option value="mastery">숙련 조건</option><option value="blocked">장애물 충돌</option><option value="miss">빗나감</option></select></label><label>방향 <select id="direction"></select></label><button id="play">일시정지</button><button id="restart">처음부터</button><label>확대 <select id="zoom"><option value="1">기본</option><option value="2">2배</option></select></label></section>
+<div id="stage-scroll"><div id="stage"></div></div><section class="timeline"><input id="time" type="range" min="0" max="300" value="0" aria-label="기술 재생 시점"><output id="clock">0.00초</output></section>
+<p id="detail" aria-live="polite"></p><details><summary>효과 프레임 및 출처</summary><pre id="frames"></pre><p>원본 효과: PMDCollab/RawAsset. 물 소용돌이: 내장 imagegen으로 제작한 8프레임 시트. 신규 제작물의 사용자 검토 상태는 pending입니다.</p></details></main><script type="module" src="/src/vfx-review.ts"></script></body></html>

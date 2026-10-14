@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import './style.css';
-import { createBattle, stepBattle } from './game/battle';
+import { createBattle, stepBattle, suspendBattleInput } from './game/battle';
 import { aiCommand } from './game/ai';
 import { WORLD, type BattleState, type Command, type Species } from './game/types';
 import { ArenaRenderer, preloadArena } from './render/ArenaRenderer';
@@ -59,6 +59,7 @@ function updateDemoLabel() {
 function togglePause() {
   if (!started || state.winner !== null || root.querySelector<HTMLElement>('[data-game-shell]')?.dataset.started !== 'true') return;
   paused = !paused;
+  if (paused) suspendBattleInput(state);
   accumulator = 0;
   input.reset();
   ui.update(state, paused);
@@ -126,6 +127,7 @@ new Phaser.Game({
 });
 
 window.addEventListener('keydown', (event) => {
+  if (document.querySelector('dialog[open]')) return;
   if ((event.code === 'Escape' || event.code === 'KeyP') && !event.repeat) {
     event.preventDefault();
     togglePause();
@@ -147,8 +149,9 @@ if (import.meta.env.DEV) {
       startDemo,
       getDemo: () => ({ active: demoMode, index: demoIndex, elapsed: demoElapsed }),
       getFrames: () => renderer?.debugFrames(),
+      getVfx: () => renderer?.debugEffects(),
       getPaused: () => paused,
-      setPaused: (value: boolean) => { paused = value; input.reset(); },
+      setPaused: (value: boolean) => { paused = value; if (value) suspendBattleInput(state); input.reset(); },
       step: (commands: [Command, Command], dt = fixedDt) => stepBattle(state, commands, dt),
       setState: (next: BattleState) => { state = structuredClone(next); },
     },

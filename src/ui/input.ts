@@ -7,6 +7,8 @@ const actionKeys: Record<string, 'melee' | 'ranged' | 'special' | 'dodge'> = { K
 export class InputController {
   private keys = new Set<string>();
   private pointers = new Map<number, string>();
+  // Preserve discrete taps that begin and end between fixed simulation steps.
+  private pressed = new Set<string>();
   private stick = { x: 0, y: 0 };
   private stickPointer: number | null = null;
   private pointerAim: Vec | null = null;
@@ -43,6 +45,8 @@ export class InputController {
     if (movementKeys.has(event.code) || actionKeys[event.code]) {
       event.preventDefault();
       this.keys.add(event.code);
+      const action = actionKeys[event.code];
+      if (!event.repeat && action) this.pressed.add(action);
     }
   };
 
@@ -55,6 +59,7 @@ export class InputController {
       event.preventDefault();
       this.updatePointerAim(event);
       this.pointers.set(event.pointerId, 'ranged');
+      this.pressed.add('ranged');
       event.target.setPointerCapture(event.pointerId);
       return;
     }
@@ -69,6 +74,7 @@ export class InputController {
       this.updateStick(event, control);
     } else {
       this.pointers.set(event.pointerId, control.dataset.action!);
+      this.pressed.add(control.dataset.action!);
       control.classList.add('is-held');
     }
     control.setPointerCapture(event.pointerId);
@@ -127,10 +133,12 @@ export class InputController {
     const length = Math.hypot(command.move.x, command.move.y);
     if (length > 1) { command.move.x /= length; command.move.y /= length; }
     const touches = new Set(this.pointers.values());
-    command.melee = down('KeyJ') || touches.has('melee');
-    command.ranged = down('KeyK') || touches.has('ranged');
-    command.dodge = down('Space') || touches.has('dodge');
-    command.special = down('KeyL') || touches.has('special');
+    command.melee = down('KeyJ') || touches.has('melee') || this.pressed.has('melee');
+    command.rangedHeld = down('KeyK') || touches.has('ranged');
+    command.ranged = command.rangedHeld || this.pressed.has('ranged');
+    command.dodge = down('Space') || touches.has('dodge') || this.pressed.has('dodge');
+    command.special = down('KeyL') || touches.has('special') || this.pressed.has('special');
+    this.pressed.clear();
     if (this.pointerAim && origin) {
       const x = this.pointerAim.x - origin.x;
       const y = this.pointerAim.y - origin.y;
@@ -143,6 +151,7 @@ export class InputController {
   reset = (): void => {
     this.keys.clear();
     this.pointers.clear();
+    this.pressed.clear();
     this.stickPointer = null;
     this.pointerAim = null;
     this.stick = { x: 0, y: 0 };

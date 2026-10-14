@@ -1,4 +1,5 @@
 import { WORLD, emptyCommand, type BattleState, type Command, type Vec } from './types';
+import { BULBASAUR as B, IVYSAUR as I } from './grassMoves';
 
 interface Memory { nextThink: number; lastTime: number; command: Command }
 // Memory belongs to a match, so restart and parallel simulation need no global reset.
@@ -40,9 +41,11 @@ export function aiCommand(state: BattleState, id: number, dt: number): Command {
   const punish = target.phase === 'recovery' && distance < 205;
   const counter = enemyChannel && self.energy >= 38 && Math.floor(phase / 3) % 3 !== 0;
   const electric = self.species === 'pikachu';
+  const grass = self.species === 'bulbasaur';
+  const ivy = self.species === 'ivysaur';
   // Quick Attack reaches farther, while Thunder still targets the shared 170px zone.
-  const meleeRange = electric ? 89 : 79;
-  const preferred = rush || punish ? (electric ? 63 : 53) : self.species === 'charmander' ? 175 : electric ? 195 : 205;
+  const meleeRange = ivy ? I.vine.range : grass ? B.vine.range : electric ? 89 : 79;
+  const preferred = rush || punish ? (ivy ? 115 : grass ? 85 : electric ? 63 : 53) : self.species === 'charmander' ? 175 : electric ? 195 : 205;
   const advance = distance > preferred + 20 ? 0.8 : distance < preferred - 40 ? -0.4 : 0;
   const strafe = holdingChannel || counter ? 0.045 : enemyChannel ? 0.45 : 0.15;
   const move = { x: toward.x * advance + tangent.x * strafe, y: toward.y * advance + tangent.y * strafe };
@@ -81,14 +84,33 @@ export function aiCommand(state: BattleState, id: number, dt: number): Command {
   if (self.pos.x > WORLD.right - 55) move.x = Math.min(move.x, -0.5);
   if (self.pos.y < WORLD.top + 55) move.y = Math.max(move.y, 0.5);
   if (self.pos.y > WORLD.bottom - 55) move.y = Math.min(move.y, -0.5);
-  const castSpecial = !holdingChannel && !danger && !counter && self.specialCooldown <= 0 && self.energy >= 40 && distance > 105 && distance < 235;
+  // React to visible projectiles, without clearing a seed just by rolling.
+  if (!holdingChannel && self.dodgeCooldown <= 0 && phase % 2.8 < 1.1 && state.projectiles.some(p => p.owner !== id && Math.hypot(p.pos.x - self.pos.x, p.pos.y - self.pos.y) < 95)) {
+    dodge = true; move.x = tangent.x; move.y = tangent.y;
+  }
+  // Solar Beam exposes its locked line before firing; use that visible warning.
+  if (target.species === 'ivysaur' && target.action === 'special' && target.phase === 'windup' && target.phaseTime <= I.solar.lockTime && distance < I.solar.range) {
+    const alignment = -toward.x * target.facing.x - toward.y * target.facing.y;
+    if (alignment > .97) {
+      move.x = tangent.x; move.y = tangent.y;
+      dodge = self.dodgeCooldown <= 0;
+    }
+  }
+  const enemyPreparingSpecial = target.action === 'special' && target.phase === 'windup';
+  const castSpecial = !holdingChannel && !danger && !counter && !enemyPreparingSpecial && self.specialCooldown <= 0 && self.energy >= 40 && distance > 105 && distance < (grass || ivy ? 300 : 235) && (!grass || !state.leechSeeds.some(seed => seed.owner === id));
   memory.command = {
     move, aim, dodge,
     melee: !holdingChannel && !danger && distance < meleeRange,
     special: castSpecial,
     // Preserve windup AND active channel, independent of changing tactic/distance.
     // Hazard escape is the only intentional early cancel, through the normal dodge.
-    ranged: holdingChannel || (!danger && !castSpecial && distance >= meleeRange + 1 && distance < (electric ? 375 : 335) && self.energy >= 38 && (!rush || counter)),
+    ranged: holdingChannel || (!danger && !castSpecial && distance >= meleeRange + 1 && distance < (electric ? 375 : 335) && self.energy >= (grass || ivy ? 12 : 38) && (!rush || counter)),
   };
+  if (grass) {
+    if (self.rangedNeedsRelease) memory.command.ranged = false;
+    // Decisions still occur at the same 0.22s cadence. Charge time is visible to players too.
+    const prepareCombo = state.leechSeeds.some(seed => seed.owner === id) || state.projectiles.some(p => p.owner === id && p.kind === 'seed');
+    memory.command.rangedHeld = memory.command.ranged && (self.action === 'ranged' && self.phase === 'windup' ? self.chargeTime + 1e-7 < B.leaf.perfectStart : prepareCombo || distance > 240);
+  }
   return copy(memory.command);
 }

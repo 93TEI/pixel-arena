@@ -30,11 +30,11 @@ h1 span { color: #f0ce77; }
 #game-mount:focus { outline: none; }
 #game-mount canvas { display: block; image-rendering: pixelated; width: 100% !important; height: 100% !important; touch-action: none; }
 .game-overlay { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: #11131ab3; backdrop-filter: blur(3px); }
-.selection-panel { text-align: center; padding: 20px; width: 690px; max-width: 95%; }
+.selection-panel { text-align: center; padding: 20px; width: 850px; max-width: 95%; }
 .eyebrow { font: 600 12px 'Barlow Condensed', sans-serif; letter-spacing: 3px; color: #eccb7c; margin: 0 0 10px; }
 h2 { margin: 0; font-size: 26px; letter-spacing: -1px; font-weight: 800; }
 .panel-copy { color: #a8aab8; font-size: 12px; margin: 11px 0 24px; }
-.fighter-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.fighter-options { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 15px; }
 .fighter-card { display: flex; flex-direction: column; align-items: flex-start; text-align: left; position: relative; border: 1px solid #6d5146; border-radius: 6px; padding: 21px; background: linear-gradient(150deg, #342824, #202127); overflow: hidden; transition: border-color .15s, transform .15s; }
 .fighter-card.water { border-color: #435e6d; background: linear-gradient(150deg, #23323b, #202127); }
 .fighter-card:hover { transform: translateY(-3px); border-color: #eda264; }
@@ -164,3 +164,52 @@ kbd { font: 500 11px 'Barlow Condensed', system-ui, sans-serif; display: inline-
   .cooldown-item b { font-size: 8px; min-width: 20px; }
   .melee-status { display: none; }
 }
+
+.fighter-card.psychic { border-color: #735491; background: linear-gradient(150deg, #362944, #202127); }
+.fighter-card.psychic:hover { border-color: #c69aef; }
+.psychic .fighter-fallback, .psychic .fighter-number { color: #c69aef; }
+@media (max-width: 580px) {
+  .fighter-card { padding: 6px 3px; }
+  .fighter-description { white-space: normal; font-size: 8px; min-height: 22px; }
+  .fighter-number { letter-spacing: 0; font-size: 6px; }
+  .fighter-card strong { font-size: 15px; }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .fighter-card { padding: 7px 4px; align-items: center; text-align: center; }
+  .fighter-description { white-space: normal; min-height: 22px; }
+  .fighter-number { font-size: 6px; letter-spacing: 0; }
+}
+
+.fighter-card.grass { border-color: #527d4e; background: linear-gradient(150deg, #2d4230, #202127); }
+.fighter-card.grass:hover { border-color: #afe282; }
+.grass .fighter-fallback, .grass .fighter-number { color: #afe282; }
+.grass .fighter-number { letter-spacing: 0; white-space: normal; }
+.species-hint { color: #b5ccab; text-align: center; font-size: 11px; padding: 0 12px; }
+@media (max-width: 580px) {
+  .fighter-card strong { font-size: 11px; white-space: nowrap; }
+  .fighter-number { font-size: 5px; }
+  .species-hint { font-size: 9px; }
+}
+
+.move-help { color: #e7efdf; background: #202b29; border: 1px solid #88ab72; border-radius: 10px; width: min(650px, 90vw); max-height: 85dvh; overflow: auto; padding: 22px; }
+.move-help::backdrop { background: #070c13bb; }
+.move-help h3 { font-size: 16px; color: #c4e995; margin-bottom: 7px; }
+.move-help p { line-height: 1.65; font-size: 14px; }
+.move-help select { margin: 15px; font: inherit; }
+.charge-meter { padding: 10px; margin: 10px auto; max-width: 400px; color: #d3ecac; font-size: 12px; }
+.charge-meter > div { position: relative; height: 9px; background: #314232; margin-top: 7px; }
+.charge-meter i { display: block; height: 100%; background: #73b963; }
+.charge-meter b { position: absolute; left: var(--perfect-start); width: var(--perfect-width); height: 100%; top: 0; background: #e5e67b66; border-inline: 2px solid #edf195; }
+@media (min-width: 581px) { .fighter-card { padding: 14px 9px; } .fighter-card strong { font-size: 21px; } .fighter-number { font-size: 8px; letter-spacing: .3px; } }
+@media (max-width: 580px) and (orientation: portrait) {
+  [data-started="false"] .game-stage { min-height: 365px; }
+  .fighter-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fighter-card strong { font-size: 15px; } .fighter-number { font-size: 7px; }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .fighter-card strong { font-size: 13px; } .fighter-card { padding: 7px 3px; }
+  .fighter-number { font-size: 5px; } .match-tools { gap: 4px; }
+  [data-help] { padding: 5px; font-size: 9px; } .charge-meter { margin: 0 auto; padding: 3px; font-size: 9px; }
+}
+
+.move-help-heading { display: flex; align-items: center; justify-content: space-between; position: sticky; top: -22px; padding-block: 10px; background: #202b29; z-index: 1; }

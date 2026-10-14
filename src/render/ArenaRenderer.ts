@@ -1,11 +1,13 @@
+import { EffectRenderer, preloadEffects } from './EffectRenderer';
 import Phaser from 'phaser';
-import type { BattleState, Beam, Effect, Fighter, Hazard, Obstacle, Vec } from '../game/types';
+import type { BattleState, Fighter, Obstacle, Vec } from '../game/types';
 import { WORLD } from '../game/types';
 import { animationData, type AnimationClip } from './animationData';
 
 export function preloadArena(scene: Phaser.Scene): void {
   // Art is optional and local. A clean source checkout deliberately has no PNGs.
   scene.load.maxRetries = 0;
+  preloadEffects(scene);
   const failed: string[] = [];
   const onMissing = (file: Phaser.Loader.File) => { failed.push(file.key); };
   scene.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, onMissing);
@@ -25,18 +27,14 @@ interface FighterView {
   animation: string; phase: string; animationStart: number; debug: FrameDebug;
 }
 const clamp = Phaser.Math.Clamp;
-const TAU = Math.PI * 2;
 const directionRow = (v: Vec) => (Math.round((Math.PI / 2 - Math.atan2(v.y, v.x)) / (Math.PI / 4)) + 8) % 8;
-const elementColor = (species: string) => species === 'pikachu' ? 0xffe15a : species === 'charmander' ? 0xff9a40 : 0x7bdcff;
+const elementColor = (species: string) => species === 'ivysaur' ? 0xaedd72 : species === 'bulbasaur' ? 0x9cdb68 : species === 'mewtwo' ? 0xc58bff : species === 'pikachu' ? 0xffe15a : species === 'charmander' ? 0xff9a40 : 0x7bdcff;
 
 /** Sprite frames and all effects follow simulation time, so pause freezes motion. */
 export class ArenaRenderer {
   private floor: Phaser.GameObjects.Graphics;
   private floorImage: Phaser.GameObjects.Image;
-  private ground: Phaser.GameObjects.Graphics;
-  private zones: Phaser.GameObjects.Graphics;
-  private attacks: Phaser.GameObjects.Graphics;
-  private effects: Phaser.GameObjects.Graphics;
+  private vfx: EffectRenderer;
   private props = new Map<number, Phaser.GameObjects.Graphics>();
   private views: FighterView[] = [];
   private lastTime = -1;
@@ -44,10 +42,7 @@ export class ArenaRenderer {
 
   constructor(private scene: Phaser.Scene) {
     this.floor = scene.add.graphics().setDepth(0);
-    this.ground = scene.add.graphics().setDepth(1);
-    this.zones = scene.add.graphics().setDepth(700);
-    this.attacks = scene.add.graphics().setDepth(800);
-    this.effects = scene.add.graphics().setDepth(900);
+    this.vfx = new EffectRenderer(scene);
     this.drawArena();
     // Bake the unchanging stone detail once instead of replaying hundreds of paths.
     this.floor.generateTexture('arena-stone-floor', WORLD.width, WORLD.height);
@@ -74,6 +69,7 @@ export class ArenaRenderer {
       });
     }
   }
+  debugEffects() { return this.vfx.debug(); }
   debugFrames(): FrameDebug[] { return this.views.map(view => ({ ...view.debug, anchor: { ...view.debug.anchor } })); }
   /** Input coordinates are stage-local 960x600, before the small impact shake. */
   screenToWorld(x: number, y: number): Vec { const point = this.scene.cameras.main.getWorldPoint(x, y); return { x: point.x, y: point.y }; }
@@ -137,20 +133,16 @@ export class ArenaRenderer {
   render(state: BattleState): void {
     if (state.time < this.lastTime) this.views.forEach(view => { view.animation = ''; view.history = []; view.lastGhostTime = -1; });
     this.lastTime = state.time;
-    this.ground.clear(); this.zones.clear(); this.attacks.clear(); this.effects.clear();
-    this.drawGround(state); this.drawObstacles(state.obstacles);
-    for (const hazard of state.hazards) this.drawHazard(hazard, state.time);
-    state.fighters.forEach((fighter, id) => this.drawFighter(this.views[id], fighter, state.time));
-    for (const beam of state.beams) this.drawBeam(beam, state.time);
-    if (state.clash) this.drawClash(state.clash.pos, state.clash.intensity, state.time, state.beams.some(beam => beam.species === 'pikachu'));
-    for (const effect of state.effects) this.drawEffect(effect);
+    this.drawObstacles(state.obstacles);
+    state.fighters.forEach((fighter, id) => this.drawFighter(this.views[id], fighter, state.time, state));
+    this.vfx.render(state);
     const shake = Math.min(2.6, Math.max(0, state.cameraImpact) * 4);
     this.scene.cameras.main.setScroll(Math.sin(state.time * 91) * shake, Math.cos(state.time * 113) * shake * 0.6);
   }
   private clip(species: string, name: string): { name: string; data: AnimationClip } {
     const entry = animationData[species][name]; return 'alias' in entry ? this.clip(species, entry.alias) : { name, data: entry };
   }
-  private drawFighter(view: FighterView, f: Fighter, time: number): void {
+  private drawFighter(view: FighterView, f: Fighter, time: number, state: BattleState): void {
     let animation = 'Idle';
     if (f.hp <= 0 || f.knockdownTime > 0) animation = 'Faint';
     else if (f.hitTime > 0 || f.stunTime > 0) animation = 'Hurt';
@@ -158,9 +150,10 @@ export class ArenaRenderer {
     else if (f.action === 'melee') animation = 'Attack';
     else if (f.action === 'ranged' || f.action === 'special') animation = f.phase === 'windup' ? 'Charge' : 'Shoot';
     else if (Math.hypot(f.moveVelocity.x, f.moveVelocity.y) > 5) animation = 'Walk';
-    if (view.animation !== animation || view.phase !== f.phase || time < view.animationStart) {
-      view.animation = animation; view.phase = f.phase; view.animationStart = time;
+    if (view.animation !== animation || (view.phase !== f.phase && animation !== 'Faint' && animation !== 'Hurt') || time < view.animationStart) {
+      view.animation = animation; view.animationStart = time;
     }
+    view.phase = f.phase;
     const { name, data } = this.clip(f.species, animation);
     const progress = f.phaseDuration > 0 ? clamp(1 - f.phaseTime / f.phaseDuration, 0, 0.999) : 0;
     let column = 0;
@@ -168,7 +161,8 @@ export class ArenaRenderer {
     if (animation === 'Attack') {
       const rush = data.rushFrame ?? 2; const back = data.returnFrame ?? data.columns - 2;
       column = f.phase === 'windup' ? inRange(0, Math.max(0, rush - 1), progress) : f.phase === 'active' ? inRange(rush, Math.max(rush, back - 1), progress) : inRange(back, data.columns - 1, progress);
-    } else if (animation === 'Faint') column = Math.min(data.columns - 1, Math.floor((time - view.animationStart) / 0.075));
+    // Match time freezes on defeat, so hold the final pose; knockdowns play the full clip.
+    } else if (animation === 'Faint') column = f.hp <= 0 ? data.columns - 1 : Math.min(data.columns - 1, Math.floor((time - view.animationStart) / 0.075));
     else if (animation === 'Hurt') column = time - view.animationStart < 0.04 ? 0 : data.columns - 1;
     else if (animation === 'Charge' && f.phase === 'windup') column = inRange(0, Math.min(data.columns - 1, data.hitFrame ?? 4), progress);
     else if (animation === 'Shoot' && f.phase === 'recovery') column = inRange(data.returnFrame ?? data.columns - 3, data.columns - 1, progress);
@@ -194,37 +188,12 @@ export class ArenaRenderer {
       const ghost = view.history[i]; image.setVisible(Boolean(ghost));
       if (ghost) image.setTexture(ghost.texture, ghost.frame).setOrigin(ghost.ox, ghost.oy).setPosition(ghost.x, ghost.y).setDepth(ghost.y + 4).setTint(elementColor(f.species)).setAlpha((1 - (time - ghost.time) / 0.19) * 0.32);
     });
-    const bars = view.bars.clear(); const x = Math.round(f.pos.x - 29); const y = Math.round(f.pos.y - 65);
+    const bars = view.bars.clear(); const x = Math.round(f.pos.x - 29); const y = Math.round(f.pos.y - (f.species === 'mewtwo' ? 85 : 65));
     bars.fillStyle(0x111b2a, 0.92).fillRect(x - 1, y - 1, 60, 10);
     bars.fillStyle(0x324b61).fillRect(x, y, 58, 7);
     bars.fillStyle(f.hp / f.maxHp < 0.25 ? 0xff8171 : 0x39c5f2).fillRect(x, y, 58 * Math.max(0, f.hp / f.maxHp), 7);
     bars.fillStyle(0xc8f5ff, 0.8).fillRect(x, y, 58 * Math.max(0, f.hp / f.maxHp), 1);
     view.label.setPosition(f.pos.x, y - 8);
-    if (f.phase === 'windup' && (f.action === 'ranged' || f.action === 'special')) {
-      const color = elementColor(f.species);
-      this.ground.lineStyle(2, color, 0.55).strokeEllipse(f.pos.x, f.pos.y, 48 + progress * 14, 19 + progress * 5);
-      for (let i = 0; i < 6; i++) { const a = i * TAU / 6 + time * 6; const r = 26 * (1 - progress) + 9;
-        this.effects.fillStyle(color, 0.7).fillRect(f.pos.x + Math.cos(a) * r - 1, f.pos.y - 21 + Math.sin(a) * r - 1, 3, 3);
-      }
-    }
-    if (f.paralysisTime > 0 && f.hp > 0) {
-      for (let i = 0; i < 3; i++) {
-        const angle = time * 5 + i * TAU / 3;
-        const start = { x: f.pos.x + Math.cos(angle) * 18, y: f.pos.y - 23 + Math.sin(angle) * 16 };
-        this.lightning(this.effects, start, { x: start.x + Math.cos(angle + 1) * 14, y: start.y - 8 }, time + i, 2, 0.9);
-      }
-    }
-  }
-  private drawGround(state: BattleState): void {
-    const g = this.ground;
-    for (const mark of state.groundMarks) {
-      const alpha = Math.min(0.6, mark.life * 0.16); const r = mark.radius; const wet = mark.kind === 'wet';
-      g.fillStyle(wet ? 0x448caa : 0x141b24, alpha).fillEllipse(mark.pos.x, mark.pos.y, r * 2, r * 1.22);
-      g.lineStyle(2, wet ? 0x9cdef4 : 0x9a9182, alpha * 0.6).strokeEllipse(mark.pos.x, mark.pos.y, r * 2.1, r * 1.3);
-      if (!wet) for (let i = 0; i < 7; i++) { const a = i * TAU / 7 + mark.angle;
-        g.lineStyle(2, 0x18202c, alpha * 1.3).lineBetween(mark.pos.x + Math.cos(a) * r * 0.6, mark.pos.y + Math.sin(a) * r * 0.4, mark.pos.x + Math.cos(a) * r * 1.4, mark.pos.y + Math.sin(a) * r * 0.9);
-      }
-    }
   }
   private drawObstacles(obstacles: Obstacle[]): void {
     const alive = new Set(obstacles.filter(o => o.hp > 0).map(o => o.id));
@@ -254,165 +223,9 @@ export class ArenaRenderer {
       if (obstacle.hp < obstacle.maxHp * 0.7) { g.lineStyle(2, 0x1b2029).beginPath(); g.moveTo(-r * 0.35, -r * 1.4); g.lineTo(2, -r * 0.75); g.lineTo(-6, -r * 0.35); g.lineTo(2, 0); g.strokePath(); }
     }
   }
-  private drawBeam(beam: Beam, time: number): void {
-    const g = this.attacks; const sx = beam.start.x; const sy = beam.start.y - 24; const ex = beam.end.x; const ey = beam.end.y - 24;
-    const dx = ex - sx; const dy = ey - sy; const distance = Math.hypot(dx, dy); if (distance < 1) return;
-    const ux = dx / distance; const uy = dy / distance; const width = Math.max(8, beam.width); const fire = beam.species === 'charmander';
-    if (beam.species === 'pikachu') {
-      this.lightning(g, { x: sx, y: sy }, { x: ex, y: ey }, time, width * 0.35, 1);
-      for (let branch = 0; branch < 5; branch++) {
-        const t = (branch + 1) / 6;
-        const side = branch % 2 ? 1 : -1;
-        const start = { x: sx + dx * t, y: sy + dy * t };
-        const end = { x: start.x + ux * 16 - uy * side * 20, y: start.y + uy * 16 + ux * side * 20 };
-        this.lightning(g, start, end, time + branch, 1.5, 0.7);
-      }
-      g.fillStyle(0xfff5a8, 0.85).fillCircle(sx, sy, 7);
-      if (beam.blocked) this.spark(ex, ey, time * 13, 0xffe56f, 24, 0.9);
-      return;
-    }
-    g.lineStyle(width * 2.6, fire ? 0xff6b1d : 0x48a9ff, 0.1).lineBetween(sx, sy, ex, ey);
-    if (fire) {
-      const count = Math.ceil(distance / 9);
-      for (let i = 0; i <= count; i++) {
-        const t = i / count; const wave = Math.sin(i * 1.8 - time * 38) * (2 + t * 3);
-        const x = sx + dx * t - uy * wave; const y = sy + dy * t + ux * wave;
-        const r = width * (0.3 + t * 0.52) + Math.sin(time * 29 - i * 1.6) * 1.5;
-        g.fillStyle(0x8f301b).fillCircle(x, y + 2, r + 2); g.fillStyle(0xe9541c).fillCircle(x, y, r + 0.5);
-        g.fillStyle(0xff982d).fillCircle(x + ux * 2, y - 1, r * 0.77); g.fillStyle(0xffd25a).fillCircle(x + ux * 3, y - 1.5, r * 0.46);
-        g.fillStyle(0xfff1be, 0.9).fillCircle(x + ux * 4, y - 2, r * 0.19);
-      }
-      for (let i = 0; i < 9; i++) { const t = (time * 0.8 + i / 9) % 1; const side = Math.sin(i * 19 + time * 3);
-        g.fillStyle(i % 2 ? 0xffd276 : 0xff8540, 0.7).fillRect(sx + dx * t - uy * side * width * 1.9, sy + dy * t + ux * side * width * 1.9, 2 + i % 2, 2 + i % 2);
-      }
-    } else {
-      for (const [lineWidth, color, alpha] of [[width * 1.4, 0x1458a4, 0.95], [width, 0x248feb, 1], [width * 0.59, 0x8ae8ff, 1], [width * 0.28, 0xf4ffff, 1]]) {
-        g.lineStyle(lineWidth, color, alpha).beginPath(); g.moveTo(sx, sy);
-        for (let i = 1; i <= 16; i++) { const t = i / 16; const bend = Math.sin(t * 18 - time * 22) * 2.4 * Math.sin(t * Math.PI); g.lineTo(sx + dx * t - uy * bend, sy + dy * t + ux * bend); } g.strokePath();
-      }
-      for (let i = 0; i < 14; i++) { const t = (time * 1.4 + i / 14) % 1; const side = Math.sin(i * 13) * width * 0.95;
-        g.fillStyle(0xdbfbff, 0.7).fillRect(sx + dx * t - uy * side, sy + dy * t + ux * side, 2, 3);
-      }
-    }
-    g.fillStyle(fire ? 0xffcf55 : 0xcffaff, 0.75).fillCircle(sx, sy, width * 0.45);
-    if (beam.blocked) this.spark(ex, ey, time * 10, fire ? 0xffc660 : 0xc0f3ff, width * 1.2, 0.8);
-  }
-  private drawClash(pos: Vec, intensity: number, time: number, electric = false): void {
-    const g = this.effects; const y = pos.y - 24; const r = 12 + Math.min(2, intensity) * 5;
-    g.fillStyle(0xffebad, 0.13).fillCircle(pos.x, y, r * 2.3); g.fillStyle(0xe3fbff, 0.6).fillCircle(pos.x, y, r);
-    g.fillStyle(0xfff9dc).fillCircle(pos.x + Math.sin(time * 31) * 3, y, r * 0.65); this.spark(pos.x, y, time * 7, 0xf0fcff, r * 1.8, 0.9);
-    if (electric) {
-      for (let i = 0; i < 6; i++) {
-        const a = i * TAU / 6 + time;
-        this.lightning(g, { x: pos.x, y }, { x: pos.x + Math.cos(a) * 47, y: y + Math.sin(a) * 38 }, time + i, 2, 0.8);
-      }
-      return;
-    }
-    // Advect steam from the actual simulation clash, never a fabricated crossing.
-    for (let i = 0; i < 18; i++) { const age = (time * 0.85 + i / 18) % 1;
-      const x = pos.x + Math.sin(age * 5 + time + i * 0.7) * (7 + age * 25) - age * 19;
-      g.fillStyle(i % 3 ? 0xe0eef0 : 0xf2ead7, (1 - age) * 0.28).fillCircle(x, y - age * 111, 5 + age * 19);
-    }
-  }
-  private drawHazard(h: Hazard, time: number): void {
-    const g = this.zones; const fire = h.species === 'charmander'; const color = elementColor(h.species); const fade = Math.min(1, h.life * 3);
-    if (h.warmup > 0) {
-      this.ground.fillStyle(color, 0.07).fillCircle(h.pos.x, h.pos.y, h.radius);
-      this.ground.lineStyle(2, color, 0.6 + Math.sin(time * 22) * 0.2).strokeCircle(h.pos.x, h.pos.y, h.radius);
-      this.ground.lineStyle(1, color, 0.5).strokeCircle(h.pos.x, h.pos.y, h.radius * 0.76); return;
-    }
-    if (h.species === 'pikachu') {
-      const pulse = Math.max(0.2, 1 - ((0.6 - h.life + 0.6) % 0.2) / 0.2);
-      this.ground.fillStyle(0xffd748, 0.13 * pulse).fillCircle(h.pos.x, h.pos.y, h.radius);
-      this.ground.lineStyle(3, 0xffe787, fade * 0.8).strokeEllipse(h.pos.x, h.pos.y, h.radius * 2, h.radius * 1.25);
-      for (let i = 0; i < 3; i++) {
-        const a = i * TAU / 3 + Math.floor(time * 5) * 0.6;
-        const target = { x: h.pos.x + Math.cos(a) * h.radius * 0.48, y: h.pos.y + Math.sin(a) * h.radius * 0.36 };
-        this.lightning(g, { x: target.x - 20, y: target.y - 145 }, target, time + i, 3 + pulse * 3, Math.max(0.3, fade));
-        this.spark(target.x, target.y, time * 12 + i, 0xfff4b5, 15 + pulse * 14, fade);
-      }
-      return;
-    }
-    this.ground.fillStyle(fire ? 0x74281d : 0x15588a, fade * 0.24).fillEllipse(h.pos.x, h.pos.y, h.radius * 2, h.radius * 1.25);
-    if (fire) {
-      const height = 105; const base = h.radius * 0.6;
-      for (let band = 0; band < 5; band++) for (const [lineWidth, c, alpha] of [[8, 0xa63a15, 0.85], [5, 0xff761e, 0.96], [2, 0xffdd71, 0.92]]) {
-        g.lineStyle(lineWidth, c, alpha * fade).beginPath();
-        for (let i = 0; i <= 30; i++) { const t = i / 30; const angle = t * TAU + time * 9 + band * 0.55;
-          const lift = (band / 5 + t / 5) * height; const radius = base * (0.54 + lift / height * 0.52);
-          const x = h.pos.x + Math.cos(angle) * radius; const y = h.pos.y - lift + Math.sin(angle) * radius * 0.26;
-          if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
-        } g.strokePath();
-      }
-      for (let i = 0; i < 16; i++) { const age = (time * 0.7 + i / 16) % 1; const a = i * 2.4 + time * 6;
-        g.fillStyle(i % 2 ? 0xffedb2 : 0xff903e, fade * (1 - age)).fillRect(h.pos.x + Math.cos(a) * base * (1 + age), h.pos.y - age * 135, 3, 4);
-      }
-    } else {
-      for (let arm = 0; arm < 3; arm++) for (const [lineWidth, c, alpha] of [[13, 0x237eca, 0.45], [7, 0x57bcff, 0.9], [2, 0xe5fcff, 1]]) {
-        g.lineStyle(lineWidth, c, alpha * fade).beginPath();
-        for (let i = 0; i <= 30; i++) { const t = i / 30; const a = arm * TAU / 3 + t * 2.4 - time * 5; const radius = 8 + t * (h.radius - 8);
-          const x = h.pos.x + Math.cos(a) * radius; const y = h.pos.y + Math.sin(a) * radius * 0.62 - 7;
-          if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
-        } g.strokePath();
-      }
-      for (let i = 0; i < 24; i++) { const a = i * 2.4 + time * 2.8; const r = h.radius * (0.45 + ((i * 0.23 + time * 0.4) % 0.65));
-        g.fillStyle(0xbcefff, fade * 0.8).fillRect(h.pos.x + Math.cos(a) * r, h.pos.y + Math.sin(a) * r * 0.65 - 5 - Math.sin(time * 9 + i) * 6, 2, 3);
-      }
-    }
-  }
-  private lightning(g: Phaser.GameObjects.Graphics, start: Vec, end: Vec, time: number, width: number, alpha: number): void {
-    const dx = end.x - start.x, dy = end.y - start.y, distance = Math.hypot(dx, dy);
-    if (distance < 0.01) return;
-    const count = Math.max(3, Math.ceil(distance / 15));
-    const points: Vec[] = [];
-    for (let i = 0; i <= count; i++) {
-      const t = i / count;
-      const zig = i === 0 || i === count ? 0 : Math.sin(i * 17.3 + Math.floor(time * 24) * 9.1) * Math.min(12, distance * 0.2);
-      points.push({ x: start.x + dx * t - dy / distance * zig, y: start.y + dy * t + dx / distance * zig });
-    }
-    for (const [scale, color, opacity] of [[4, 0xffbb22, 0.12], [1.8, 0xe8a924, 0.8], [1, 0xffe467, 1], [0.35, 0xffffff, 1]]) {
-      g.lineStyle(width * scale, color, alpha * opacity).strokePoints(points, false);
-    }
-  }
-  private spark(x: number, y: number, phase: number, color: number, radius: number, alpha: number): void {
-    for (let i = 0; i < 9; i++) { const angle = i * TAU / 9 + phase * 0.35; const r = radius * (0.65 + Math.sin(i * 17 + phase) * 0.35);
-      this.effects.lineStyle(i % 2 ? 2 : 3, color, alpha).lineBetween(x + Math.cos(angle) * r * 0.45, y + Math.sin(angle) * r * 0.45, x + Math.cos(angle) * r, y + Math.sin(angle) * r);
-    }
-  }
-  private drawEffect(e: Effect): void {
-    const g = this.effects; const progress = 1 - clamp(e.life / e.maxLife, 0, 1); const alpha = 1 - progress;
-    const color = elementColor(e.species); const x = e.pos.x; const y = e.pos.y;
-    if (e.kind === 'dust' || e.kind === 'steam' || e.kind === 'trail') {
-      for (let i = 0; i < 4; i++) { const a = i * 2.4 + e.id; const r = 4 + progress * 13;
-        g.fillStyle(e.kind === 'steam' ? 0xe1eff3 : 0xc3b9a2, alpha * 0.24).fillCircle(x + Math.cos(a) * progress * 14, y - progress * 15 + Math.sin(a) * progress * 5, r * (0.7 + i * 0.13));
-      }
-    } else if (e.kind === 'debris') {
-      for (let i = 0; i < 9; i++) { const a = e.angle + i * 2.4; const distance = progress * (28 + (i % 3) * 17);
-        const px = x + Math.cos(a) * distance; const py = y + Math.sin(a) * distance * 0.65 - Math.sin(progress * Math.PI) * (20 + i * 2);
-        g.fillStyle(i % 2 ? 0xa59070 : 0x788591, alpha).fillTriangle(px - 4, py - 4, px + 6, py - 1, px - 1, py + 5);
-        g.lineStyle(1, 0x26313a, alpha).lineBetween(px - 4, py - 4, px + 6, py - 1);
-      }
-    } else if (e.kind === 'melee') {
-      for (let slash = 0; slash < 2; slash++) { const radius = 17 + progress * 33 + slash * 7;
-        g.lineStyle(5 - slash * 2, slash ? color : 0xfff7dc, alpha).beginPath(); g.arc(x, y - 23, radius, e.angle - 0.85 + progress * 0.3, e.angle + 0.75, false); g.strokePath();
-      }
-    } else if (e.kind === 'hit' || e.kind === 'burst') {
-      const radius = (e.kind === 'burst' ? 56 : 30) * (0.4 + progress);
-      g.fillStyle(color, alpha * 0.2).fillCircle(x, y - 22, radius * 0.6); this.spark(x, y - 22, e.id + progress, alpha > 0.7 ? 0xffffff : color, radius, alpha);
-      if (e.kind === 'burst') g.lineStyle(3, color, alpha).strokeCircle(x, y - 10, radius);
-    } else if (e.kind === 'dodge' || e.kind === 'shockwave') {
-      g.lineStyle(e.kind === 'shockwave' ? 3 : 2, 0xe0e6db, alpha * 0.7).strokeEllipse(x, y, 25 + progress * 65, 10 + progress * 23);
-    } else if (e.kind === 'splash') {
-      g.lineStyle(2, 0x91dfff, alpha * 0.8).strokeEllipse(x, y, 16 + progress * 38, 7 + progress * 16);
-      for (let i = 0; i < 7; i++) { const a = i * TAU / 7; const r = progress * 22;
-        g.fillStyle(0xc4f4ff, alpha).fillRect(x + Math.cos(a) * r, y + Math.sin(a) * r * 0.5 - Math.sin(progress * Math.PI) * 15, 3, 4);
-      }
-    } else if (e.kind === 'charge') g.lineStyle(2, color, alpha * 0.6).strokeEllipse(x, y - 10, 18 + progress * 35, 12 + progress * 13);
-    else if (e.kind === 'scorch') this.ground.fillStyle(0x17181d, alpha * 0.3).fillEllipse(x, y, 22 + progress * 15, 12);
-  }
   destroy(): void {
     this.floorImage.destroy();
-    [this.floor, this.ground, this.zones, this.attacks, this.effects].forEach(graphics => graphics.destroy()); this.props.forEach(graphics => graphics.destroy());
+    this.floor.destroy(); this.vfx.destroy(); this.props.forEach(graphics => graphics.destroy());
     this.views.forEach(view => { view.sprite.destroy(); view.shadow.destroy(); view.bars.destroy(); view.label.destroy(); view.ghosts.forEach(ghost => ghost.destroy()); });
     this.scene.cameras.main.setScroll(0, 0);
   }

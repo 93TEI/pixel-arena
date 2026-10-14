@@ -25,9 +25,51 @@ public/assets/
 *.tar
 *.gz
 
+# Additional image and editable artwork formats (including uppercase extensions)
+*.[pP][nN][gG]
+*.[jJ][pP][gG]
+*.[jJ][pP][eE][gG]
+*.[gG][iI][fF]
+*.[wW][eE][bB][pP]
+*.[aA][vV][iI][fF]
+*.[sS][vV][gG]
+*.[iI][cC][oO]
+*.[bB][mM][pP]
+*.[tT][iI][fF]
+*.[tT][iI][fF][fF]
+*.[aA][pP][nN][gG]
+*.[hH][eE][iI][cC]
+*.[hH][eE][iI][fF]
+*.[sS][vV][gG][zZ]
+*.[pP][sS][dD]
+*.[pP][sS][bB]
+*.[aA][iI]
+*.[eE][pP][sS]
+*.[aA][sS][eE]
+*.[aA][sS][eE][pP][rR][iI][tT][eE]
+*.[xX][cC][fF]
+*.[kK][rR][aA]
+*.[sS][kK][eE][tT][cC][hH]
+*.[fF][iI][gG]
+*.[pP][dD][fF]
+
+# Local reference material and visual reviews
+[rR]eference/
+[rR]eferences/
+[rR]eference-materials/
+[rR]eference.*
+[rR]eferences.*
+*-reference.*
+*_reference.*
+screenshots/
+recordings/
+art-reviews/
+mockups/
+
 # Local documentation, work logs and tool configuration
 *.[mM][dD]
 *.markdown
+*.[mM][aA][rR][kK][dD][oO][wW][nN]
 docs/
 notes/
 artifacts/

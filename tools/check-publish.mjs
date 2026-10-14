@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' });
-const excluded = /(?:^|\/)(?:public\/assets|docs|notes|artifacts|test-results|playwright-report|node_modules|dist|build|coverage|\.openai(?:-local)?|\.codex|\.agents|\.claude|\.local)(?:\/|$)|(?:^|\/)\.env(?:\.|$)|\.(?:md|markdown|png|jpe?g|gif|webp|avif|svg|ico|bmp|tiff?|mp4|webm|mov|zip|tar|gz|log)$/i;
+const excluded = /(?:^|\/)(?:public\/assets|docs|notes|artifacts|test-results|playwright-report|node_modules|dist|build|coverage|references?|reference-materials|screenshots|recordings|art-reviews|mockups|\.openai(?:-local)?|\.codex|\.agents|\.claude|\.local)(?:\/|$)|(?:^|\/)references?\.[^/]+$|[-_]reference\.[^/]+$|(?:^|\/)\.env(?:\.|$)|\.(?:md|markdown|png|jpe?g|gif|webp|avif|svgz?|ico|bmp|tiff?|apng|heic|heif|psd|psb|ai|eps|ase|aseprite|xcf|kra|sketch|fig|pdf|mp4|webm|mov|zip|tar|gz|log)$/i;
 const tracked = git('ls-files', '-z').split('\0').filter(Boolean);
 const violations = new Set(tracked.filter(path => excluded.test(path)));
 // Inspect outgoing history. Existing remote commits are already published and
