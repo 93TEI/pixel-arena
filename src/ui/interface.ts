@@ -1,9 +1,10 @@
-import { BULBASAUR as B, IVYSAUR as I, grassHelp, isGrass, leafTier } from '../game/grassMoves';
+import { BULBASAUR as B, IVYSAUR as I, VENUSAUR as V, grassHelp, isGrass, leafTier } from '../game/grassMoves';
 import type { BattleState, Species } from '../game/types';
 
 type Callbacks = { onSelect: (species: Species, opponent?: Species) => void; onRestart: () => void; onPause: () => void; onDemo?: () => void };
-const names: Record<Species, string> = { bulbasaur: '이상해씨', ivysaur: '이상해풀', charmander: '파이리', squirtle: '꼬부기', pikachu: '피카츄', mewtwo: '뮤츠' };
+const names: Record<Species, string> = { bulbasaur: '이상해씨', ivysaur: '이상해풀', venusaur: '이상해꽃', charmander: '파이리', squirtle: '꼬부기', pikachu: '피카츄', mewtwo: '뮤츠' };
 const moves: Record<Species, { melee: string; ranged: string; special: string }> = {
+  venusaur: { melee: '꽃보라', ranged: '씨폭탄', special: '하드플랜트' },
   ivysaur: { melee: '덩굴채찍', ranged: '잎날가르기', special: '솔라빔' },
   bulbasaur: { melee: '덩굴채찍', ranged: '잎날가르기', special: '씨뿌리기' },
   charmander: { melee: '할퀴기', ranged: '화염방사', special: '불꽃 회오리' },
@@ -27,7 +28,7 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
       <section class="arena-frame" aria-label="포켓몬 경기장">
         <div class="match-bar"><div><span class="live-dot"></span><strong>1 VS 1</strong><span class="match-type" data-match-type>TRAINING ARENA</span></div><div class="match-tools"><button type="button" class="quiet-button demo-button" data-demo ${callbacks.onDemo ? '' : 'hidden'}>영상 동작 보기</button><button type="button" class="quiet-button" data-help>기술 설명</button><time data-timer>00:00</time><button type="button" class="quiet-button" data-pause disabled aria-label="일시정지">일시정지 <kbd>Esc</kbd></button></div></div>
         <div class="game-stage">
-          <div id="game-mount" tabindex="-1" aria-label="이상해씨, 이상해풀, 파이리, 꼬부기, 피카츄, 뮤츠의 실시간 전투"></div>
+          <div id="game-mount" tabindex="-1" aria-label="이상해씨, 이상해풀, 이상해꽃, 파이리, 꼬부기, 피카츄, 뮤츠의 실시간 전투"></div>
           <div class="demo-banner"><span data-demo-label>영상 속 동작을 전투 규칙으로 시연합니다</span><button type="button" data-demo-exit>직접 플레이</button></div>
           <div class="game-overlay select-overlay" data-select-overlay>
             <div class="selection-panel">
@@ -35,12 +36,13 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
               <div class="fighter-options">
                 <button type="button" class="fighter-card grass" data-species="bulbasaur"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/bulbasaur.png" alt="" hidden></span><span class="fighter-number">#001 · GRASS / POISON</span><strong>이상해씨</strong><span class="fighter-description">덩굴채찍 · 씨뿌리기</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
                 <button type="button" class="fighter-card grass ivy" data-species="ivysaur"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/ivysaur.png" alt="" hidden></span><span class="fighter-number">#002 · GRASS / POISON</span><strong>이상해풀</strong><span class="fighter-description">왕복 잎 · 솔라빔</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
+                <button type="button" class="fighter-card grass ivy" data-species="venusaur"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/venusaur.png" alt="" hidden></span><span class="fighter-number">#003 · GRASS / POISON</span><strong>이상해꽃</strong><span class="fighter-description">씨폭탄 · 하드플랜트</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
                 <button type="button" class="fighter-card fire" data-species="charmander"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/charmander.png" alt="" hidden></span><span class="fighter-number">#004 · FIRE</span><strong>파이리</strong><span class="fighter-description">화염방사 · 불꽃 회오리</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
                 <button type="button" class="fighter-card water" data-species="squirtle"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/squirtle.png" alt="" hidden></span><span class="fighter-number">#007 · WATER</span><strong>꼬부기</strong><span class="fighter-description">물대포 · 물 소용돌이</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
                 <button type="button" class="fighter-card electric" data-species="pikachu"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/pikachu.png" alt="" hidden></span><span class="fighter-number">#025 · ELECTRIC</span><strong>피카츄</strong><span class="fighter-description">10만볼트 · 번개</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
                 <button type="button" class="fighter-card psychic" data-species="mewtwo"><span class="fighter-portrait"><span class="fighter-fallback" aria-hidden="true">◇</span><img class="fighter-thumbnail" src="${import.meta.env.BASE_URL}assets/mewtwo.png" alt="" hidden></span><span class="fighter-number">#150 · PSYCHIC</span><strong>뮤츠</strong><span class="fighter-description">염동력 · 사이코브레이크</span><span class="choose-label">선택하고 시작 <span>↗</span></span></button>
               </div>
-              <label class="opponent-choice">상대 포켓몬 <select data-opponent aria-label="상대 포켓몬"><option value="">자동</option><option value="bulbasaur">이상해씨</option><option value="ivysaur">이상해풀</option><option value="charmander">파이리</option><option value="squirtle">꼬부기</option><option value="pikachu">피카츄</option><option value="mewtwo">뮤츠</option></select></label>
+              <label class="opponent-choice">상대 포켓몬 <select data-opponent aria-label="상대 포켓몬"><option value="">자동</option><option value="bulbasaur">이상해씨</option><option value="ivysaur">이상해풀</option><option value="venusaur">이상해꽃</option><option value="charmander">파이리</option><option value="squirtle">꼬부기</option><option value="pikachu">피카츄</option><option value="mewtwo">뮤츠</option></select></label>
               <p class="selection-hint">K 원거리 기술 · L 특수 기술</p>
             </div>
           </div>
@@ -152,7 +154,7 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
       find('[data-energy-value]').textContent = String(Math.round(fighter.energy));
       find('[data-energy-fill]').style.width = `${energy}%`;
       find('[data-energy-meter]').setAttribute('aria-valuenow', String(Math.round(energy)));
-      const phase = fighter.knockdownTime > 0 ? '넘어짐' : fighter.stunTime > 0 ? '피격' : fighter.paralysisTime > 0 ? '감전·이동 둔화' : fighter.phase === 'windup' ? '충전 중' : fighter.phase === 'recovery' ? '후딜 · 회복 중' : fighter.phase === 'active' ? (fighter.action === 'ranged' ? (isGrass(fighter.species) ? '잎 발사' : '연속 방사 중') : fighter.action === 'dodge' ? '회피 중' : '기술 발동') : '준비';
+      const phase = fighter.knockdownTime > 0 ? '넘어짐' : fighter.stunTime > 0 ? '피격' : fighter.paralysisTime > 0 ? '감전·이동 둔화' : fighter.phase === 'windup' ? '충전 중' : fighter.phase === 'recovery' ? '후딜 · 회복 중' : fighter.phase === 'active' ? (fighter.action === 'ranged' ? (isGrass(fighter.species) ? fighter.species === 'venusaur' ? '씨폭탄 발사' : '잎 발사' : '연속 방사 중') : fighter.action === 'dodge' ? '회피 중' : '기술 발동') : '준비';
       const seeded = state.leechSeeds.find(seed => seed.target === fighter.id);
       const marked = state.leechSeeds.find(seed => seed.owner === fighter.id);
       const status = seeded ? `씨앗 ${seeded.life.toFixed(1)}s · 후속 공격 주의` : isGrass(fighter.species) && fighter.hp > 0 && fighter.hp <= fighter.maxHp / 3 ? `심록 · ${phase}` : phase;
@@ -161,7 +163,7 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
       const ready = (seconds: number, minEnergy = 0) => seconds > 0.05 ? `${seconds.toFixed(1)}s` : fighter.energy < minEnergy ? '에너지 부족' : '준비';
       const hint = find('[data-species-hint]');
       hint.hidden = !isGrass(fighter.species);
-      hint.textContent = fighter.species === 'bulbasaur' ? `씨앗 → J·탭 K +${B.leaf.combo} / 충전 K +${B.leaf.chargedCombo} · ${marked ? `연계 가능 ${marked.life.toFixed(1)}초` : `K ${B.leaf.perfectStart}~${B.leaf.perfectEnd}초에 놓으면 피해 ${B.leaf.perfectDamage}`} · 자세한 조건은 기술 설명` : `J 끝거리 피해 ${I.vine.tipDamage} · K 왕복 ${I.leaf.damage}+${I.leaf.returnDamage} · L 예고 후 피해 ${I.solar.damage} · 자세한 조건은 기술 설명`;
+      hint.textContent = fighter.species === 'venusaur' ? `J 주변 견제 · K 중심 피해 ${V.bomb.coreDamage} · L 끝거리 피해 ${V.roots.tipDamage} · 자세한 조건은 기술 설명` : fighter.species === 'bulbasaur' ? `씨앗 → J·탭 K +${B.leaf.combo} / 충전 K +${B.leaf.chargedCombo} · ${marked ? `연계 가능 ${marked.life.toFixed(1)}초` : `K ${B.leaf.perfectStart}~${B.leaf.perfectEnd}초에 놓으면 피해 ${B.leaf.perfectDamage}`} · 자세한 조건은 기술 설명` : `J 끝거리 피해 ${I.vine.tipDamage} · K 왕복 ${I.leaf.damage}+${I.leaf.returnDamage} · L 예고 후 피해 ${I.solar.damage} · 자세한 조건은 기술 설명`;
       const charging = fighter.species === 'bulbasaur' && fighter.action === 'ranged' && fighter.phase === 'windup';
       const meter = find('[data-charge]'); meter.hidden = !charging;
       if (charging) {
@@ -173,7 +175,7 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
         find('[data-charge-label]').textContent = fighter.chargeSuspended ? 'K를 다시 누르면 충전 재개' : leafTier(fighter.chargeTime) === 'perfect' ? `지금 놓기 · 피해 ${B.leaf.perfectDamage}` : `충전 ${fighter.chargeTime.toFixed(2)}초 · 밝은 구간에 놓기`;
       }
       const skill = moves[fighter.species];
-      find('[data-ranged-hint]').textContent = fighter.species === 'bulbasaur' ? '탭 / 충전 후 놓기' : fighter.species === 'ivysaur' ? '탭 / 왕복 맞히기' : '길게 누르기 / 클릭';
+      find('[data-ranged-hint]').textContent = fighter.species === 'bulbasaur' ? '탭 / 충전 후 놓기' : fighter.species === 'venusaur' ? '탭 / 착탄 중심 맞히기' : fighter.species === 'ivysaur' ? '탭 / 왕복 맞히기' : '길게 누르기 / 클릭';
       find('[data-melee-label]').textContent = skill.melee;
       find('[data-stream-label]').textContent = skill.ranged;
       find('[data-special-label]').textContent = skill.special;
@@ -186,15 +188,15 @@ export function createUI(root: HTMLElement, callbacks: Callbacks): { update(stat
       touchMelee.textContent = skill.melee;
       touchMelee.setAttribute('aria-label', skill.melee);
       if (touchRanged.dataset.skillSpecies !== fighter.species) {
-        touchRanged.innerHTML = `${skill.ranged}<small>${fighter.species === 'bulbasaur' ? '충전' : fighter.species === 'ivysaur' ? '왕복' : '길게'}</small>`;
+        touchRanged.innerHTML = `${skill.ranged}<small>${fighter.species === 'bulbasaur' ? '충전' : fighter.species === 'venusaur' ? '투척' : fighter.species === 'ivysaur' ? '왕복' : '길게'}</small>`;
         touchRanged.dataset.skillSpecies = fighter.species;
       }
       touchRanged.setAttribute('aria-label', `${skill.ranged} ${fighter.species === 'bulbasaur' ? '탭 또는 길게 누르기' : fighter.species === 'ivysaur' ? '탭하여 왕복 잎 던지기' : '길게 누르기'}`);
       touchSpecial.textContent = skill.special;
       touchSpecial.setAttribute('aria-label', skill.special);
       find('[data-melee-ready]').textContent = ready(fighter.meleeCooldown);
-      find('[data-ranged-ready]').textContent = ready(fighter.rangedCooldown, fighter.species === 'bulbasaur' ? B.leaf.cost : fighter.species === 'ivysaur' ? I.leaf.cost : 8);
-      find('[data-special-ready]').textContent = ready(fighter.specialCooldown, fighter.species === 'bulbasaur' ? B.seed.cost : fighter.species === 'ivysaur' ? I.solar.cost : 30);
+      find('[data-ranged-ready]').textContent = ready(fighter.rangedCooldown, fighter.species === 'venusaur' ? V.bomb.cost : fighter.species === 'bulbasaur' ? B.leaf.cost : fighter.species === 'ivysaur' ? I.leaf.cost : 8);
+      find('[data-special-ready]').textContent = ready(fighter.specialCooldown, fighter.species === 'venusaur' ? V.roots.cost : fighter.species === 'bulbasaur' ? B.seed.cost : fighter.species === 'ivysaur' ? I.solar.cost : 30);
       find('[data-dodge-ready]').textContent = ready(fighter.dodgeCooldown);
       pauseButton.disabled = !started || state.winner !== null;
       const pauseLabel = paused ? '계속하기' : '일시정지';

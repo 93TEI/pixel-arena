@@ -9,6 +9,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(root, 'public/assets');
 const origin = 'https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master';
 const pokemon = [
+  { name: 'venusaur', id: '0003', portrait: 3, actions: ['Walk', 'Idle', 'Attack', 'Hurt', 'Charge', 'Shoot', 'Sleep', 'Shake'], markers: true },
   { name: 'ivysaur', id: '0002', portrait: 2, actions: ['Walk', 'Idle', 'Attack', 'Hurt', 'Charge', 'Shoot', 'Sleep'], markers: true },
   { name: 'bulbasaur', id: '0001', portrait: 1, actions: ['Walk', 'Idle', 'Attack', 'Hurt', 'Charge', 'Shoot', 'Faint'], markers: true },
   { name: 'charmander', id: '0004', portrait: 4, actions: ['Walk', 'Idle', 'Attack', 'Hurt', 'Charge', 'Faint'] },

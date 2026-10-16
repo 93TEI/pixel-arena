@@ -1,5 +1,5 @@
 import { WORLD, emptyCommand, type BattleState, type Command, type Vec } from './types';
-import { BULBASAUR as B, IVYSAUR as I } from './grassMoves';
+import { BULBASAUR as B, IVYSAUR as I, VENUSAUR as V } from './grassMoves';
 
 interface Memory { nextThink: number; lastTime: number; command: Command }
 // Memory belongs to a match, so restart and parallel simulation need no global reset.
@@ -43,9 +43,10 @@ export function aiCommand(state: BattleState, id: number, dt: number): Command {
   const electric = self.species === 'pikachu';
   const grass = self.species === 'bulbasaur';
   const ivy = self.species === 'ivysaur';
+  const venus = self.species === 'venusaur';
   // Quick Attack reaches farther, while Thunder still targets the shared 170px zone.
-  const meleeRange = ivy ? I.vine.range : grass ? B.vine.range : electric ? 89 : 79;
-  const preferred = rush || punish ? (ivy ? 115 : grass ? 85 : electric ? 63 : 53) : self.species === 'charmander' ? 175 : electric ? 195 : 205;
+  const meleeRange = venus ? V.petals.range : ivy ? I.vine.range : grass ? B.vine.range : electric ? 89 : 79;
+  const preferred = venus && (rush || punish || distance < 180) ? 80 : venus ? (self.specialCooldown <= 0 && self.energy >= V.roots.cost ? 285 : V.bomb.range) : rush || punish ? (ivy ? 115 : grass ? 85 : electric ? 63 : 53) : self.species === 'charmander' ? 175 : electric ? 195 : 205;
   const advance = distance > preferred + 20 ? 0.8 : distance < preferred - 40 ? -0.4 : 0;
   const strafe = holdingChannel || counter ? 0.045 : enemyChannel ? 0.45 : 0.15;
   const move = { x: toward.x * advance + tangent.x * strafe, y: toward.y * advance + tangent.y * strafe };
@@ -96,6 +97,16 @@ export function aiCommand(state: BattleState, id: number, dt: number): Command {
       dodge = self.dodgeCooldown <= 0;
     }
   }
+  // Visible landing/root warnings, with the same reaction cadence as all other threats.
+  const plantDanger = state.plantAttacks.find(a => a.owner !== id && a.points.some((p, i) => a.age < (a.kind === 'bomb' ? V.bomb.flight : V.roots.warning + i * V.roots.interval) && Math.hypot(self.pos.x - p.x, self.pos.y - p.y) < (a.kind === 'bomb' ? V.bomb.radius : V.roots.radius) + self.radius));
+  if (plantDanger && !holdingChannel) {
+    move.x = tangent.x; move.y = tangent.y;
+    if (self.dodgeCooldown <= 0 && plantDanger.age > .3) dodge = true;
+  }
+  if (target.species === 'venusaur' && target.action === 'special' && target.phase === 'windup' && !holdingChannel && distance < 350 && -toward.x * target.facing.x - toward.y * target.facing.y > .97) {
+    move.x = tangent.x; move.y = tangent.y;
+    dodge = self.dodgeCooldown <= 0 && target.phaseTime < .25;
+  }
   const enemyPreparingSpecial = target.action === 'special' && target.phase === 'windup';
   const castSpecial = !holdingChannel && !danger && !counter && !enemyPreparingSpecial && self.specialCooldown <= 0 && self.energy >= 40 && distance > 105 && distance < (grass || ivy ? 300 : 235) && (!grass || !state.leechSeeds.some(seed => seed.owner === id));
   memory.command = {
@@ -106,6 +117,11 @@ export function aiCommand(state: BattleState, id: number, dt: number): Command {
     // Hazard escape is the only intentional early cancel, through the normal dodge.
     ranged: holdingChannel || (!danger && !castSpecial && distance >= meleeRange + 1 && distance < (electric ? 375 : 335) && self.energy >= (grass || ivy ? 12 : 38) && (!rush || counter)),
   };
+  if (venus) {
+    memory.command.special = !danger && !holdingChannel && (enemyChannel || target.phase === 'recovery' || distance > 285) && !enemyPreparingSpecial && self.specialCooldown <= 0 && self.energy >= V.roots.cost && distance > 135 && distance < 335;
+    memory.command.ranged = !danger && !memory.command.special && self.energy >= V.bomb.cost && distance > 160 && distance < 305;
+    memory.command.melee = !danger && distance < V.petals.range;
+  }
   if (grass) {
     if (self.rangedNeedsRelease) memory.command.ranged = false;
     // Decisions still occur at the same 0.22s cadence. Charge time is visible to players too.

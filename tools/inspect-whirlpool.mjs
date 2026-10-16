@@ -1,0 +1,6 @@
+import { chromium } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE});
+const page=await browser.newPage();await page.goto('http://127.0.0.1:5173/vfx-review.html');
+const result=await page.evaluate(async()=>{const image=new Image();image.src='/assets/vfx/whirlpool-source.png';await image.decode();const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;const frames=[];for(let i=0;i<8;i++){c.clearRect(0,0,64,64);c.drawImage(image,i%4*image.width/4,Math.floor(i/4)*image.height/2,image.width/4,image.height/2,0,0,64,64);const p=c.getImageData(0,0,64,64).data;let mass=0,x=0,y=0;for(let j=0;j<4096;j++){const a=p[j*4+3]/255;mass+=a;x+=(j%64)*a;y+=Math.floor(j/64)*a;}frames.push({x:Math.round(x/mass),y:Math.round(y/mass)});}return {file:'whirlpool-source.png',sourceWidth:image.width,sourceHeight:image.height,sourceColumns:4,sourceRows:2,frameWidth:64,frameHeight:64,columns:8,fps:12,anchors:frames};});
+await writeFile('src/render/whirlpool.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));await browser.close();

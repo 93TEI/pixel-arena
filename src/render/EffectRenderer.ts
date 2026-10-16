@@ -1,20 +1,21 @@
 import Phaser from 'phaser';
 import manifest from './vfx-manifest.json';
-import type { BattleState, Beam, Effect, Fighter, Hazard, Species, Vec } from '../game/types';
-import { BULBASAUR as B, IVYSAUR as I, isGrass, leafTier } from '../game/grassMoves';
-import { solarTrace } from '../game/battle';
+import whirlpool from './whirlpool.json';
+import type { BattleState, Beam, Effect, Fighter, Hazard, PlantAttack, Species, Vec } from '../game/types';
+import { BULBASAUR as B, IVYSAUR as I, VENUSAUR as V, isGrass, leafTier } from '../game/grassMoves';
+import { solarTrace, rootPoints, bombLanding } from '../game/battle';
 
 const SCALE = 2.4, TAU = Math.PI * 2;
 type Clip = keyof typeof manifest | 'whirlpool';
 type Draw = { clip: Clip; frame: number; x: number; y: number; depth: number; missing: boolean };
-const palettes: Record<Species, string> = { charmander: '#ffbb56', squirtle: '#87dfff', pikachu: '#fff3a0', mewtwo: '#d4a0f3', bulbasaur: '#b7e585', ivysaur: '#e9eda0' };
+const palettes: Record<Species, string> = { charmander: '#ffbb56', squirtle: '#87dfff', pikachu: '#fff3a0', mewtwo: '#d4a0f3', bulbasaur: '#b7e585', ivysaur: '#e9eda0', venusaur: '#f9b0c5' };
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 
 export function preloadEffects(scene: Phaser.Scene): void {
   for (const [key, clip] of Object.entries(manifest)) {
     scene.load.spritesheet(`vfx-${key}`, `./assets/vfx/${clip.file}`, { frameWidth: clip.frameWidth, frameHeight: clip.frameHeight });
   }
-  scene.load.image('vfx-whirlpool-source', './assets/vfx/whirlpool-source.png');
+  scene.load.image('vfx-whirlpool-source', `./assets/vfx/${whirlpool.file}`);
 }
 
 /** Original frames at character pixel density. Code controls choreography, never substitutes circles for spell art. */
@@ -100,6 +101,7 @@ export class EffectRenderer {
       c.globalAlpha = 1;
     }
     for (const h of s.hazards) this.hazard(h);
+    for (const plant of s.plantAttacks) this.plant(plant);
     for (const f of s.fighters) this.fighter(f, s);
     for (const beam of s.beams) this.beam(beam);
     for (const p of s.projectiles) {
@@ -116,13 +118,46 @@ export class EffectRenderer {
       this.boundary(target.pos, 24, palettes.bulbasaur, seed.life / B.seed.duration);
       if (!isGrass(target.species)) { const t = s.time * 1.7 % 1; this.emit('absorb', target.pos.x + (owner.pos.x - target.pos.x) * t, target.pos.y - 22 + (owner.pos.y - target.pos.y) * t, this.frame('absorb'), 820); }
     }
-    for (const e of s.effects) this.effect(e);
+    for (const e of s.effects) {
+      // Initial placement emits a shockwave event too; keep the warning visually distinct from a hit.
+      if (e.kind === 'shockwave' && s.hazards.some(h => h.warmup > 0 && h.species === e.species && Math.hypot(h.pos.x - e.pos.x, h.pos.y - e.pos.y) < 1)) continue;
+      this.effect(e);
+    }
     if (s.clash) {
       this.emit('heavyHit', s.clash.pos.x, s.clash.pos.y - 24, this.frame('heavyHit'), 850);
       for (let i = 0; i < 3; i++) { const age = (s.clash.age + i * .19) % .7; this.emit('steam', s.clash.pos.x - age * 20 + i * 8, s.clash.pos.y - 28 - age * 95, Math.min(6, Math.floor(age * 10)), 849, 1 - age); }
     }
     for (let i = this.used; i < this.pool.length; i++) this.pool[i].setVisible(false);
     this.ground.refresh(); this.paths.refresh(); this.renderMs = performance.now() - start;
+  }
+
+  private plant(a: PlantAttack): void {
+    if (a.kind === 'bomb') {
+      const p = a.points[0], t = clamp(a.age / V.bomb.flight, 0, 1);
+      if (t < 1) {
+        this.boundary(p, V.bomb.radius, palettes.venusaur, 1, true);
+        this.boundary(p, V.bomb.coreRadius, '#fff3c0', 1, true);
+        const x = a.origin.x + (p.x - a.origin.x) * t, y = a.origin.y + (p.y - a.origin.y) * t;
+        this.emit('seed', x, y - 28 - Math.sin(t * Math.PI) * 75, 0, y + 70);
+        this.emit('leafSpin', x - 6, y - 26 - Math.sin(t * Math.PI) * 75, this.frame('leafSpin', a.age, 25), y + 71);
+      } else {
+        const age = a.age - V.bomb.flight, alpha = clamp((.5 - age) * 6, 0, 1);
+        for (let i = 0; i < 8; i++) {
+          const angle = i * TAU / 8, r = 14 + age * 90;
+          this.emit(i % 2 ? 'petal' : 'leafSpin', p.x + Math.cos(angle) * r, p.y + Math.sin(angle) * r - Math.sin(age * Math.PI * 2) * 20, this.frame(i % 2 ? 'petal' : 'leafSpin', age + i * .05), p.y + Math.sin(angle) * r + 12, alpha);
+        }
+      }
+      return;
+    }
+    a.points.forEach((p, i) => {
+      const age = a.age - V.roots.warning - i * V.roots.interval;
+      if (age < 0) { this.boundary(p, V.roots.radius, i === V.roots.count - 1 ? '#fff3c0' : palettes.venusaur, 1, true); return; }
+      if (age > .65) return;
+      const frame = Math.min(this.count('roots') - 1, Math.floor(age / .65 * this.count('roots')));
+      // The original plant grows out of the bottom of its cell, at the hit location.
+      this.emit('roots', p.x, p.y + 4, frame, p.y + 11, clamp((.65 - age) * 12, 0, 1), [.5, .88]);
+      if (age < .22) this.emit('dust', p.x, p.y - 2, Math.min(this.count('dust') - 1, Math.floor(age * 25)), p.y + 4, .65);
+    });
   }
 
   private hazard(h: Hazard): void {
@@ -143,7 +178,8 @@ export class EffectRenderer {
       }
     } else if (h.species === 'squirtle') {
       // Ground body keeps fighters legible; individual foreground splashes provide depth.
-      this.emit('whirlpool', h.pos.x, h.pos.y - 14, this.frame('whirlpool', age, 12), 4, alpha);
+      const frame = this.frame('whirlpool', age, whirlpool.fps), anchor = whirlpool.anchors[frame];
+      this.emit('whirlpool', h.pos.x, h.pos.y - 14, frame, 4, alpha, [anchor.x / whirlpool.frameWidth, anchor.y / whirlpool.frameHeight]);
       for (let i = 0; i < 3; i++) { const a = -this.time * 2.2 + i * TAU / 3, y = h.pos.y + Math.sin(a) * 28;
         this.emit('waterSplash', h.pos.x + Math.cos(a) * 49, y - 9, this.frame('waterSplash', this.time + i * .09, 12), y + 12, alpha);
       }
@@ -167,9 +203,14 @@ export class EffectRenderer {
     const { x, y } = f.pos;
     if (f.phase === 'windup' && (f.action === 'ranged' || f.action === 'special')) {
       const progress = clamp(1 - f.phaseTime / f.phaseDuration, 0, .999);
-      const key: Clip = f.species === 'ivysaur' && f.action === 'special' ? 'solarCharge' : isGrass(f.species) ? 'leafCharge' : f.species === 'charmander' ? 'ember' : f.species === 'squirtle' ? 'waterWave' : f.species === 'pikachu' ? 'charge' : 'psychicCharge';
+      const key: Clip = f.species === 'venusaur' ? 'petalBack' : f.species === 'ivysaur' && f.action === 'special' ? 'solarCharge' : isGrass(f.species) ? 'leafCharge' : f.species === 'charmander' ? 'ember' : f.species === 'squirtle' ? 'waterWave' : f.species === 'pikachu' ? 'charge' : 'psychicCharge';
       const frame = Math.min(this.count(key) - 1, Math.floor(progress * this.count(key)));
       this.emit(key, x, y - (f.species === 'ivysaur' ? 35 : 22), frame, y + 14, .9);
+      if (f.species === 'venusaur') {
+        const points = f.action === 'special' ? rootPoints(s, f) : [bombLanding(f)];
+        points.forEach((p, i) => this.boundary(p, f.action === 'special' ? V.roots.radius : V.bomb.radius, i === V.roots.count - 1 ? '#fff3c0' : palettes.venusaur, 1, true));
+        for (let i = 0; i < 4; i++) { const a = i * TAU / 4 + progress * 3; this.emit('petal', x + Math.cos(a) * (30 - progress * 12), y - 30 + Math.sin(a) * 14, this.frame('petal', progress + i * .08), y + (Math.sin(a) < 0 ? -2 : 15)); }
+      }
       if (f.species === 'bulbasaur') {
         const c = this.paths.context, px = Math.round((x - 27) / SCALE), py = Math.round((y - 53) / SCALE);
         c.fillStyle = '#253528'; c.fillRect(px, py, 23, 2); c.fillStyle = '#f3eda0';
@@ -196,39 +237,39 @@ export class EffectRenderer {
     ctx.save(); ctx.translate(Math.round(start.x / SCALE), Math.round(start.y / SCALE)); ctx.rotate(angle);
     ctx.beginPath(); ctx.rect(0, -24, distance / SCALE, 48); ctx.clip();
     if (b.species === 'charmander') {
-      const texture = this.scene.textures.get('vfx-flame');
-      if (this.scene.textures.exists('vfx-flame')) for (let i = 0; i < distance / SCALE; i += 5) {
-        const frame = texture.get(2 + Math.floor((this.time * 18 - i / 10 + 1000) % 4));
-        const size = Math.round(16 + Math.min(1, i / 32) * 10);
-        ctx.save(); ctx.translate(i, 0); ctx.rotate(Math.PI / 2);
-        ctx.drawImage(frame.source.image as CanvasImageSource, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, -Math.floor(size / 2), -Math.floor(size / 2), size, size); ctx.restore();
-      } else this.missing.add('flame');
+      if (this.scene.textures.exists('vfx-ember')) for (let i = 0; i < distance / SCALE; i += 4) {
+        const frame = this.scene.textures.getFrame('vfx-ember', 1 + Math.floor((this.time * 18 - i / 9 + 1000) % 5));
+        const bend = Math.round(Math.sin(i * .23 - this.time * 14) * Math.min(2, i / 24));
+        ctx.save(); ctx.translate(i, bend); ctx.rotate(Math.PI / 2);
+        ctx.drawImage(frame.source.image as CanvasImageSource, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, -12, -12, 24, 24); ctx.restore();
+      } else this.missing.add('ember');
     } else {
-      const key: Clip = b.species === 'pikachu' ? 'lightningBody' : b.species === 'mewtwo' ? 'psychicBody' : b.species === 'ivysaur' ? 'solarBody' : 'waterBody';
+      const key: Clip = b.species === 'pikachu' ? 'lightningBody' : b.species === 'mewtwo' ? 'psychicBody' : b.species === 'ivysaur' ? 'solarBody' : 'waterFlow';
       if (this.scene.textures.exists(`vfx-${key}`)) {
         const frame = this.scene.textures.getFrame(`vfx-${key}`, this.frame(key));
         ctx.save(); ctx.rotate(-Math.PI / 2);
-        if (key === 'lightningBody') {
+        if (key === 'lightningBody' || key === 'waterFlow') {
           for (let i = 0; i < distance / SCALE; i += frame.cutHeight) ctx.drawImage(frame.source.image as CanvasImageSource, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, -frame.cutWidth / 2, i, frame.cutWidth, frame.cutHeight);
         } else {
           const width = Math.max(5, Math.round(b.width / SCALE));
           // The source column is wide; import its cross section at the actual gameplay width.
           // Short textured sections shift by a logical pixel, keeping a flowing surface.
           for (let i = 0; i < distance / SCALE; i += 5) {
-            const offset = key === 'waterBody' ? Math.round(Math.sin(i * .25 - this.time * 18)) : 0;
-            ctx.drawImage(frame.source.image as CanvasImageSource, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, -Math.floor(width / 2) + offset, i, width, Math.min(5, distance / SCALE - i));
+            ctx.drawImage(frame.source.image as CanvasImageSource, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, -Math.floor(width / 2), i, width, Math.min(5, distance / SCALE - i));
           }
         }
         ctx.restore();
       } else this.missing.add(key);
     }
-    ctx.restore();
-    const beamClip: Clip = b.species === 'charmander' ? 'flame' : b.species === 'pikachu' ? 'lightningBody' : b.species === 'mewtwo' ? 'psychicBody' : b.species === 'ivysaur' ? 'solarBody' : 'waterBody';
-    this.draws.push({ clip: beamClip, frame: this.frame(beamClip), x: Math.round(end.x), y: Math.round(end.y), depth: 800, missing: this.missing.has(beamClip) });
+    // Restore world coordinates while retaining the beam's clipping region for traveling waves.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (b.species === 'mewtwo') for (let i = 0; i < 4; i++) {
       const t = (this.time * 1.5 + i / 4) % 1;
       this.stamp(ctx, 'psychicWave', start.x + dx * t, start.y + dy * t, this.frame('psychicWave') + 2 * manifest.psychicWave.columns, angle);
     }
+    ctx.restore();
+    const beamClip: Clip = b.species === 'charmander' ? 'ember' : b.species === 'pikachu' ? 'lightningBody' : b.species === 'mewtwo' ? 'psychicBody' : b.species === 'ivysaur' ? 'solarBody' : 'waterFlow';
+    this.draws.push({ clip: beamClip, frame: this.frame(beamClip), x: Math.round(end.x), y: Math.round(end.y), depth: 800, missing: this.missing.has(beamClip) });
     if (b.blocked) {
       const key: Clip = b.species === 'charmander' ? 'ember' : b.species === 'squirtle' ? 'waterSplash' : b.species === 'pikachu' ? 'spark' : b.species === 'ivysaur' ? 'grassHit' : 'psychicHit';
       this.emit(key, end.x, end.y, this.frame(key), 825);
@@ -240,17 +281,27 @@ export class EffectRenderer {
     const alpha = Math.min(1, e.life * 12), x = e.pos.x, y = e.pos.y - 22;
     if (e.kind === 'solar' && e.end) { this.beam({ owner: 0, species: 'ivysaur', start: e.pos, end: e.end, width: 14, power: 1, blocked: true }); return; }
     if (e.kind === 'scorch') return; // persistent mark and the flame body already express heat
+    if (e.kind === 'melee' && e.species === 'venusaur') {
+      const radius = V.petals.range * (.8 + progress * .2);
+      this.emit('petalBack', e.pos.x, e.pos.y - 25, Math.min(this.count('petalBack') - 1, Math.floor(progress * this.count('petalBack'))), e.pos.y - 3, alpha);
+      for (let i = 0; i < 16; i++) {
+        const a = i * TAU / 16 + progress * 2.3, r = radius * (i % 2 ? 1 : .65);
+        const py = e.pos.y + Math.sin(a) * r;
+        this.emit('petal', e.pos.x + Math.cos(a) * r, py - 18 - Math.sin(progress * Math.PI) * 12, this.frame('petal', age + i * .06), py + 12, alpha);
+      }
+      this.emit('petalFront', e.pos.x, e.pos.y - 25, Math.min(this.count('petalFront') - 1, Math.floor(progress * this.count('petalFront'))), e.pos.y + 15, alpha);
+      return;
+    }
     if (e.kind === 'melee') {
       if (isGrass(e.species) && e.points?.length) {
         // Whip tips follow the clipped collision fan, with native-frame bends along the reach.
         const points = e.points, index = Math.floor(progress * (points.length - 1)), tip = points[index];
         const dx = tip.x - x, dy = tip.y - e.pos.y, distance = Math.hypot(dx, dy), ctx = this.paths.context;
-        const a = Math.atan2(dy, dx);
         const c = ctx; c.save(); c.strokeStyle = '#315337'; c.lineWidth = 3; c.beginPath();
         c.moveTo(Math.round(x / SCALE), Math.round(y / SCALE));
         c.quadraticCurveTo(Math.round((x + dx * .55 - dy * .2) / SCALE), Math.round((y + dy * .55 + dx * .2) / SCALE), Math.round(tip.x / SCALE), Math.round((tip.y - 22) / SCALE)); c.stroke();
         c.strokeStyle = '#a3d960'; c.lineWidth = 1; c.stroke(); c.restore();
-        if (distance > 5) this.stamp(ctx, 'vine', tip.x, tip.y - 22, Math.min(5, Math.floor(progress * 6)), a - Math.PI / 2, alpha);
+        if (distance > 5) this.emit('leafSpin', tip.x, tip.y - 22, this.frame('leafSpin', age, 30), 820, alpha);
         if (progress > .4 && progress < .8) this.emit('vineHit', tip.x, tip.y - 22, Math.min(2, Math.floor(progress * 3)), 820, alpha);
       } else if (e.species === 'charmander') this.stamp(this.paths.context, 'scratch', x + Math.cos(e.angle) * 32, y + Math.sin(e.angle) * 32, Math.min(6, Math.floor(progress * 7)), e.angle - Math.PI / 2, alpha);
       else {

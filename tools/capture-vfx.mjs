@@ -24,8 +24,10 @@ for (const species of ['charmander', 'squirtle', 'bulbasaur', 'ivysaur', 'pikach
 await page.evaluate(()=>{const api=window.__arena,s=api.getState();s.winner=null;s.effects=[];s.time=1;
  s.hazards=['charmander','squirtle','pikachu','mewtwo'].map((species,i)=>({id:i+200,owner:i%2,species,pos:{x:260+i*140,y:360},radius:70,life:1.4,maxLife:2.85,warmup:0,damageTimer:.2}));
  s.beams=['charmander','squirtle','pikachu','mewtwo'].map((species,i)=>({owner:i%2,species,start:{x:160,y:140+i*60},end:{x:800,y:140+i*60},width:14,power:1,blocked:true}));api.setState(s);});
-const perf = await page.evaluate(async()=>{const times=[];let prev=performance.now();for(let i=0;i<120;i++) await new Promise(r=>requestAnimationFrame(t=>{times.push(t-prev);prev=t;r();}));times.sort((a,b)=>a-b);return {median:times[60],p95:times[114],vfx:window.__arena.getVfx?.()};});
 await page.locator('canvas').screenshot({path:`${root}/stress.png`});
-await writeFile(`${root}/report.json`,JSON.stringify({report,perf},null,2));
-console.log(JSON.stringify({tag,perf}));
+// Match the original baseline's visible selection overlay during timing only.
+await page.addStyleTag({content:'[data-select-overlay] { opacity:1!important; pointer-events:none!important }'});
+const perf = await page.evaluate(async()=>{const times=[];let prev=performance.now();for(let i=0;i<120;i++) await new Promise(r=>requestAnimationFrame(t=>{times.push(t-prev);prev=t;r();}));times.sort((a,b)=>a-b);return {median:times[60],p95:times[114],vfx:window.__arena.getVfx?.()};});
+await writeFile(`${root}/report.json`,JSON.stringify({report,perf,timingScene:'Four areas and four beams; selection overlay visible, matching the original before timing capture.'},null,2));
+console.log(JSON.stringify({tag,median:perf.median,p95:perf.p95,active:perf.vfx?.active,allocated:perf.vfx?.allocated,renderMs:perf.vfx?.renderMs}));
 await browser.close();

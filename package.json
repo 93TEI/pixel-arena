@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
-    "test": "vitest run tests/battle.test.ts tests/ai.test.ts tests/demo.test.ts tests/pikachu.test.ts tests/mewtwo.test.ts tests/bulbasaur.test.ts tests/ivysaur.test.ts",
+    "test": "vitest run tests/battle.test.ts tests/ai.test.ts tests/demo.test.ts tests/pikachu.test.ts tests/mewtwo.test.ts tests/bulbasaur.test.ts tests/ivysaur.test.ts tests/venusaur.test.ts",
     "test:balance": "node tools/benchmark-balance.mjs",
     "test:browser": "playwright test",
     "preview": "vite preview --host 0.0.0.0",
     "check:publish": "node tools/check-publish.mjs",
-    "assets:local": "node tools/fetch-assets.mjs"
+    "assets:local": "node tools/fetch-assets.mjs",
+    "test:balance:venusaur": "node tools/benchmark-venusaur.mjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

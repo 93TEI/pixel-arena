@@ -28,7 +28,7 @@ interface FighterView {
 }
 const clamp = Phaser.Math.Clamp;
 const directionRow = (v: Vec) => (Math.round((Math.PI / 2 - Math.atan2(v.y, v.x)) / (Math.PI / 4)) + 8) % 8;
-const elementColor = (species: string) => species === 'ivysaur' ? 0xaedd72 : species === 'bulbasaur' ? 0x9cdb68 : species === 'mewtwo' ? 0xc58bff : species === 'pikachu' ? 0xffe15a : species === 'charmander' ? 0xff9a40 : 0x7bdcff;
+const elementColor = (species: string) => species === 'venusaur' ? 0xf3a1bb : species === 'ivysaur' ? 0xaedd72 : species === 'bulbasaur' ? 0x9cdb68 : species === 'mewtwo' ? 0xc58bff : species === 'pikachu' ? 0xffe15a : species === 'charmander' ? 0xff9a40 : 0x7bdcff;
 
 /** Sprite frames and all effects follow simulation time, so pause freezes motion. */
 export class ArenaRenderer {
@@ -147,7 +147,7 @@ export class ArenaRenderer {
     if (f.hp <= 0 || f.knockdownTime > 0) animation = 'Faint';
     else if (f.hitTime > 0 || f.stunTime > 0) animation = 'Hurt';
     else if (f.action === 'dodge') animation = 'Charge';
-    else if (f.action === 'melee') animation = 'Attack';
+    else if (f.action === 'melee') animation = f.species === 'venusaur' ? 'Shake' : 'Attack';
     else if (f.action === 'ranged' || f.action === 'special') animation = f.phase === 'windup' ? 'Charge' : 'Shoot';
     else if (Math.hypot(f.moveVelocity.x, f.moveVelocity.y) > 5) animation = 'Walk';
     if (view.animation !== animation || (view.phase !== f.phase && animation !== 'Faint' && animation !== 'Hurt') || time < view.animationStart) {

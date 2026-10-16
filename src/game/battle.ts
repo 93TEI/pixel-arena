@@ -1,8 +1,8 @@
-import { BULBASAUR as B, IVYSAUR as I, isGrass, leafTier } from './grassMoves';
+import { BULBASAUR as B, IVYSAUR as I, VENUSAUR as V, isGrass, leafTier } from './grassMoves';
 import { WORLD, type BattleState, type Beam, type Command, type Effect, type Fighter, type FighterAction, type ActionPhase, type GroundMark, type Obstacle, type Species, type Vec } from './types';
 
 // Timing and damage are explicit prototype adaptations of the reference video.
-const SPEED: Record<Species, number> = { bulbasaur: B.speed, ivysaur: I.speed, charmander: 178, squirtle: 170, pikachu: 205, mewtwo: 182 };
+const SPEED: Record<Species, number> = { bulbasaur: B.speed, ivysaur: I.speed, venusaur: V.speed, charmander: 178, squirtle: 170, pikachu: 205, mewtwo: 182 };
 const EPSILON = 1e-7;
 const clamp = (n: number, low: number, high: number) => Math.max(low, Math.min(high, n));
 const length = (v: Vec) => Math.hypot(v.x, v.y);
@@ -22,7 +22,7 @@ function fighter(id: number, species: Species): Fighter {
 export function createBattle(species: Species, seed = 20261011, opponent?: Species): BattleState {
   const spots: [Obstacle['kind'], number, number][] = [['crate', 230, 190], ['crate', 730, 190], ['crate', 270, 438], ['crate', 690, 438], ['rock', 130, 330], ['rock', 830, 330]];
   return { fighters: [fighter(0, species), fighter(1, opponent ?? (species === 'squirtle' ? 'charmander' : 'squirtle'))], projectiles: [], effects: [], time: 0, winner: null, nextId: 7, seed: seed >>> 0,
-    beams: [], clash: null, hazards: [], groundMarks: [], cameraImpact: 0, leechSeeds: [],
+    beams: [], clash: null, hazards: [], groundMarks: [], cameraImpact: 0, leechSeeds: [], plantAttacks: [],
     obstacles: spots.map(([kind, x, y], i) => ({ id: i + 1, kind, pos: { x, y }, radius: kind === 'crate' ? 22 : 26, hp: kind === 'crate' ? 28 : 66, maxHp: kind === 'crate' ? 28 : 66 })) };
 }
 
@@ -71,7 +71,7 @@ function damage(s: BattleState, target: Fighter, amount: number, direction: Vec,
   return true;
 }
 
-const grassPower = (f: Fighter) => f.hp <= f.maxHp / 3 ? (f.species === 'ivysaur' ? I.overgrow : B.overgrow) : 1;
+const grassPower = (f: Fighter) => f.hp <= f.maxHp / 3 ? (f.species === 'venusaur' ? V.overgrow : f.species === 'ivysaur' ? I.overgrow : B.overgrow) : 1;
 function comboDamage(s: BattleState, f: Fighter, target: Fighter, direct: number, bonus: number, direction: Vec, force: number) {
   const seed = s.leechSeeds.find(seed => seed.owner === f.id && seed.target === target.id);
   if (damage(s, target, direct + (seed ? bonus : 0), direction, force, f.species) && seed) {
@@ -98,6 +98,14 @@ function clearLine(s: BattleState, start: Vec, end: Vec) {
   return !s.obstacles.some(o => { const hit = o.hp > 0 ? rayCircle(start, unit(delta), o.pos, o.radius) : null; return hit !== null && hit < distance; });
 }
 function melee(s: BattleState, f: Fighter) {
+  if (f.species === 'venusaur') {
+    const target = s.fighters[1 - f.id], delta = sub(target.pos, f.pos);
+    if (length(delta) <= V.petals.range && clearLine(s, f.pos, target.pos)) damage(s, target, V.petals.damage * grassPower(f), unit(delta), 65, f.species);
+    const props = s.obstacles.filter(o => o.hp > 0 && length(sub(o.pos, f.pos)) <= V.petals.range + o.radius && clearLine(s, f.pos, point(o.pos, unit(sub(o.pos, f.pos)), -o.radius - .01)));
+    for (const o of props) obstacleDamage(s, o, V.petals.propDamage * grassPower(f), f.species);
+    effect(s, 'melee', f.pos, f.species, .42, angle(f.facing), V.petals.range);
+    return;
+  }
   if (isGrass(f.species)) {
     const v = f.species === 'bulbasaur' ? B.vine : I.vine;
     const target = s.fighters[1 - f.id], delta = sub(target.pos, f.pos), distance = length(delta);
@@ -152,7 +160,49 @@ export function solarTrace(s: BattleState, f: Fighter) {
   if (target) { reach = hit!; blocker = undefined; }
   return { end: point(f.pos, f.facing, reach), target, blocker };
 }
+// The warning and the root wave use the same fixed path; props stop the whole wave.
+export function rootPoints(s: BattleState, f: Fighter): Vec[] {
+  let reach = courtReach(f.pos, f.facing, V.roots.first + V.roots.spacing * (V.roots.count - 1));
+  for (const o of s.obstacles) {
+    const hit = o.hp > 0 ? rayCircle(f.pos, f.facing, o.pos, o.radius + V.roots.radius) : null;
+    if (hit !== null) reach = Math.min(reach, hit);
+  }
+  const points: Vec[] = [];
+  for (let i = 0; i < V.roots.count; i++) {
+    const distance = V.roots.first + i * V.roots.spacing;
+    if (distance > reach + EPSILON) break;
+    points.push(point(f.pos, f.facing, distance));
+  }
+  return points;
+}
+export function bombLanding(f: Fighter): Vec {
+  return point(f.pos, f.facing, courtReach(f.pos, f.facing, V.bomb.range));
+}
+function launchPlant(s: BattleState, f: Fighter, kind: 'bomb' | 'roots') {
+  s.plantAttacks.push({ id: s.nextId++, owner: f.id, kind, origin: { ...f.pos }, points: kind === 'bomb' ? [bombLanding(f)] : rootPoints(s, f), age: 0, power: grassPower(f), hit: false, resolved: 0 });
+}
+function updatePlants(s: BattleState, dt: number) {
+  s.plantAttacks = s.plantAttacks.filter(a => {
+    a.age += dt;
+    const target = s.fighters[1 - a.owner], bomb = a.kind === 'bomb';
+    while (a.resolved < a.points.length && a.age + EPSILON >= (bomb ? V.bomb.flight : V.roots.warning + a.resolved * V.roots.interval)) {
+      const index = a.resolved++, pos = a.points[index], delta = sub(target.pos, pos);
+      const radius = bomb ? V.bomb.radius : V.roots.radius;
+      // A surviving prop cannot be bypassed by a later root even if earlier points missed.
+      const open = bomb || clearLine(s, a.origin, pos);
+      if (open && !a.hit && length(delta) <= radius + target.radius && clearLine(s, pos, target.pos)) {
+        const direct = bomb ? length(delta) <= V.bomb.coreRadius ? V.bomb.coreDamage : V.bomb.damage : index === V.roots.count - 1 ? V.roots.tipDamage : V.roots.damage;
+        a.hit = damage(s, target, direct * a.power, unit(sub(target.pos, a.origin)), bomb ? 90 : 160, 'venusaur');
+      }
+      const props = s.obstacles.filter(o => o.hp > 0 && length(sub(o.pos, pos)) <= radius + o.radius && clearLine(s, pos, point(o.pos, unit(sub(o.pos, pos)), -o.radius - .01)));
+      if (open) for (const o of props) obstacleDamage(s, o, (bomb ? V.bomb.damage : V.roots.damage) * a.power, 'venusaur');
+      if (bomb) effect(s, 'combo', pos, 'venusaur', .45, 0, radius);
+    }
+    return a.age < (bomb ? V.bomb.flight + .5 : V.roots.warning + (V.roots.count - 1) * V.roots.interval + .65);
+  });
+}
 function special(s: BattleState, f: Fighter) {
+  if (f.species === 'venusaur') { launchPlant(s, f, 'roots'); return; }
   if (f.species === 'ivysaur') {
     const trace = solarTrace(s, f);
     if (trace.target) damage(s, trace.target, I.solar.damage * grassPower(f), f.facing, 160, f.species);
@@ -177,7 +227,7 @@ export function suspendBattleInput(s: BattleState) {
   if (f.species === 'bulbasaur' && f.action === 'ranged' && f.phase === 'windup') f.chargeSuspended = true;
 }
 function advanceAction(s: BattleState, f: Fighter, command: Command, dt: number) {
-  const bulb = f.species === 'bulbasaur', ivy = f.species === 'ivysaur';
+  const bulb = f.species === 'bulbasaur', ivy = f.species === 'ivysaur', venus = f.species === 'venusaur';
   const held = command.rangedHeld ?? command.ranged;
   if (!held) f.rangedNeedsRelease = false;
   const charging = bulb && f.action === 'ranged' && f.phase === 'windup';
@@ -216,12 +266,13 @@ function advanceAction(s: BattleState, f: Fighter, command: Command, dt: number)
         if (f.phase === 'windup') {
           if (f.action === 'melee') { phase(f, 'melee', 'active', f.species === 'pikachu' ? .12 : .14); melee(s, f); }
           else if (f.action === 'ranged') {
-            if (ivy) { phase(f, 'ranged', 'active', I.leaf.active); grassProjectile(s, f, 'returnLeaf'); f.rangedCooldown = I.leaf.cooldown; }
+            if (venus) { phase(f, 'ranged', 'active', V.bomb.active); launchPlant(s, f, 'bomb'); f.rangedCooldown = V.bomb.cooldown; }
+            else if (ivy) { phase(f, 'ranged', 'active', I.leaf.active); grassProjectile(s, f, 'returnLeaf'); f.rangedCooldown = I.leaf.cooldown; }
             else if (command.ranged && f.energy > 0) phase(f, 'ranged', 'active', 2.4);
             else phase(f, 'ranged', 'recovery', .25);
           } else if (f.action === 'special') { phase(f, 'special', 'active', .12); special(s, f); }
         } else if (f.phase === 'active') {
-          const recovery = f.action === 'ranged' ? bulb ? B.leaf.recovery : ivy ? I.leaf.recovery : .25 : f.action === 'special' && ivy ? I.solar.recovery : f.action === 'dodge' ? .1 : f.action === 'melee' && f.species === 'pikachu' ? .14 : .18;
+          const recovery = f.action === 'ranged' ? venus ? V.bomb.recovery : bulb ? B.leaf.recovery : ivy ? I.leaf.recovery : .25 : f.action === 'special' && venus ? V.roots.recovery : f.action === 'special' && ivy ? I.solar.recovery : f.action === 'dodge' ? .1 : f.action === 'melee' && f.species === 'pikachu' ? .14 : .18;
           if (f.action === 'ranged' && !isGrass(f.species)) f.rangedCooldown = .65;
           if (f.action === 'dodge') { f.dodgeTime = 0; f.velocity.x *= .2; f.velocity.y *= .2; }
           phase(f, f.action, 'recovery', recovery);
@@ -231,18 +282,18 @@ function advanceAction(s: BattleState, f: Fighter, command: Command, dt: number)
   }
   if (f.phase !== 'idle' || f.stunTime > 0 || f.knockdownTime > 0) return;
   f.actionTime = 0;
-  const specialCost = bulb ? B.seed.cost : ivy ? I.solar.cost : 30;
+  const specialCost = venus ? V.roots.cost : bulb ? B.seed.cost : ivy ? I.solar.cost : 30;
   if (command.special && f.specialCooldown <= EPSILON && f.energy >= specialCost) {
-    f.energy -= specialCost; f.specialCooldown = bulb ? B.seed.cooldown : ivy ? I.solar.cooldown : 6.5;
-    const windup = bulb ? B.seed.windup : ivy ? I.solar.windup : .4;
+    f.energy -= specialCost; f.specialCooldown = venus ? V.roots.cooldown : bulb ? B.seed.cooldown : ivy ? I.solar.cooldown : 6.5;
+    const windup = venus ? V.roots.windup : bulb ? B.seed.windup : ivy ? I.solar.windup : .4;
     phase(f, 'special', 'windup', windup); effect(s, 'charge', f.pos, f.species, windup, 0, 28);
   } else if (command.melee && f.meleeCooldown <= EPSILON) {
-    f.meleeCooldown = bulb ? B.vine.cooldown : ivy ? I.vine.cooldown : f.species === 'pikachu' ? .5 : .58;
-    phase(f, 'melee', 'windup', bulb ? B.vine.windup : ivy ? I.vine.windup : f.species === 'pikachu' ? .07 : .12);
-  } else if (command.ranged && (!bulb || !f.rangedNeedsRelease) && f.rangedCooldown <= EPSILON && f.energy >= (bulb ? B.leaf.cost : ivy ? I.leaf.cost : 8)) {
-    if (isGrass(f.species)) f.energy -= bulb ? B.leaf.cost : I.leaf.cost;
+    f.meleeCooldown = venus ? V.petals.cooldown : bulb ? B.vine.cooldown : ivy ? I.vine.cooldown : f.species === 'pikachu' ? .5 : .58;
+    phase(f, 'melee', 'windup', venus ? V.petals.windup : bulb ? B.vine.windup : ivy ? I.vine.windup : f.species === 'pikachu' ? .07 : .12);
+  } else if (command.ranged && (!bulb || !f.rangedNeedsRelease) && f.rangedCooldown <= EPSILON && f.energy >= (venus ? V.bomb.cost : bulb ? B.leaf.cost : ivy ? I.leaf.cost : 8)) {
+    if (isGrass(f.species)) f.energy -= venus ? V.bomb.cost : bulb ? B.leaf.cost : I.leaf.cost;
     f.chargeTime = 0; f.chargeRelease = bulb && !held ? 0 : null; f.chargeSuspended = false;
-    const windup = bulb ? B.leaf.maximum : ivy ? I.leaf.windup : .28;
+    const windup = venus ? V.bomb.windup : bulb ? B.leaf.maximum : ivy ? I.leaf.windup : .28;
     phase(f, 'ranged', 'windup', windup); effect(s, 'charge', f.pos, f.species, bulb ? .15 : windup, 0, 18);
   }
 }
@@ -264,7 +315,7 @@ function moveFighter(s: BattleState, f: Fighter, command: Command, dt: number) {
   if (!(f.action === 'ranged' && f.phase !== 'recovery') && f.action !== 'special') f.energy = Math.min(f.maxEnergy, f.energy + 13 * dt);
   let multiplier = f.phase === 'idle' ? 1 : f.action === 'ranged' && f.phase === 'active' ? 0.42 : f.phase === 'recovery' ? 0.65 : 0.25;
   if (f.species === 'bulbasaur' && f.action === 'ranged' && f.phase === 'windup') multiplier = .6;
-  if (f.stunTime > 0 || f.knockdownTime > 0 || f.action === 'dodge' || (f.species === 'ivysaur' && f.action === 'special' && f.phase !== 'recovery')) multiplier = 0;
+  if (f.stunTime > 0 || f.knockdownTime > 0 || f.action === 'dodge' || ((f.species === 'ivysaur' || f.species === 'venusaur') && f.action === 'special' && f.phase !== 'recovery')) multiplier = 0;
   if (f.paralysisTime > 0) multiplier *= 0.6;
   f.moveVelocity = { x: move.x * SPEED[f.species] * multiplier, y: move.y * SPEED[f.species] * multiplier };
   f.pos.x += (f.moveVelocity.x + f.velocity.x) * dt;
@@ -471,10 +522,11 @@ function tick(s: BattleState, commands: [Command, Command], dt: number) {
   updateBeams(s, dt);
   updateHazards(s, dt);
   updateProjectiles(s, dt);
+  updatePlants(s, dt);
   updateLeechSeeds(s, dt);
   s.obstacles = s.obstacles.filter(o => o.hp > 0);
   if (a.hp <= 0 || b.hp <= 0) {
-    s.winner = a.hp >= b.hp ? 0 : 1; s.beams = []; s.clash = null; s.projectiles = []; s.leechSeeds = [];
+    s.winner = a.hp >= b.hp ? 0 : 1; s.beams = []; s.clash = null; s.projectiles = []; s.leechSeeds = []; s.plantAttacks = [];
     for (const f of s.fighters) { f.moveVelocity = { x: 0, y: 0 }; f.velocity = { x: 0, y: 0 }; }
   }
 }

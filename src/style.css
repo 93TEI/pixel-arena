@@ -213,3 +213,12 @@ kbd { font: 500 11px 'Barlow Condensed', system-ui, sans-serif; display: inline-
 }
 
 .move-help-heading { display: flex; align-items: center; justify-content: space-between; position: sticky; top: -22px; padding-block: 10px; background: #202b29; z-index: 1; }
+
+/* Seven fighters: a compact roster that remains scrollable on short screens. */
+.fighter-options { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.select-overlay { overflow-y: auto; }
+@media (min-width: 581px) { .fighter-card { padding: 8px; } .fighter-portrait { height: 42px; } .fighter-card strong { font-size: 18px; } .choose-label { margin-top: 5px; padding-top: 5px; } }
+@media (max-width: 580px) { .fighter-options { grid-template-columns: repeat(3, minmax(0, 1fr)); } .arena-shell[data-started="false"] .game-stage { min-height: 430px; } }
+@media (max-height: 560px) and (orientation: landscape) { .fighter-options { grid-template-columns: repeat(4, minmax(0, 1fr)); } .select-overlay { align-items: flex-start; } .fighter-description, .choose-label { display: none; } .fighter-portrait { height: 28px; } .fighter-thumbnail { width: 30px; height: 30px; } }
+
+@media (max-height: 560px) and (orientation: landscape) { .selection-panel { padding-block: 5px; } .opponent-choice { margin-top: 5px; } .selection-hint { margin: 3px 0 0; } }

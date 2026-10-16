@@ -214,7 +214,7 @@ test('full 26-second motion demo: four segments, real clash, hazards and destruc
 test('Pikachu selection, lightning skills, paralysis, CPU selection and restart', async ({ page }) => {
   const errors = captureErrors(page);
   await open(page);
-  await expect(page.locator('[data-species]')).toHaveCount(6);
+  await expect(page.locator('[data-species]')).toHaveCount(7);
   await page.locator('[data-opponent]').selectOption('charmander');
   await page.locator('[data-species="pikachu"]').click();
   await expect(page.locator('[data-player-name]')).toHaveText('피카츄');
@@ -334,7 +334,7 @@ test('Mewtwo controls, psychic channel and telegraphed Psystrike, CPU mirror and
   expect(errors).toEqual([]);
 });
 
-test('Mewtwo mobile touch skills and six-character roster fit narrow screens', async ({ browser }) => {
+test('Mewtwo mobile touch skills and seven-character roster fit narrow screens', async ({ browser }) => {
   for (const viewport of [{ width: 844, height: 390 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     const context = await browser.newContext({ viewport, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
     const page = await context.newPage(), errors = captureErrors(page); await open(page);
@@ -637,7 +637,7 @@ test('VFX beam follows actual obstacle endpoint; water and fire have separate ne
   const beam = (await state(page)).beams[0];
   const debug = await page.evaluate(() => (window as any).__arena.getVfx());
   expect(beam.blocked).toBe(true); expect(beam.end.x).toBeLessThan(480);
-  const body = debug.draws.find((d: any) => d.clip === 'waterBody');
+  const body = debug.draws.find((d: any) => d.clip === 'waterFlow');
   expect(body.x).toBe(Math.round(beam.end.x)); expect(body.y).toBe(Math.round(beam.end.y - 24));
   await prepared(page, 'charmander'); await advance(page, 1, { ...idle, special: true });
   const d = await page.evaluate(() => (window as any).__arena.getVfx().draws);
@@ -654,4 +654,45 @@ test('VFX remain readable on mobile and the review timeline is keyboard operable
   const bounds = (await page.locator('canvas').boundingBox())!;
   expect(bounds.width).toBeLessThanOrEqual(390); expect(bounds.width).toBeGreaterThan(300);
   await page.screenshot({ path: 'docs/vfx-overhaul/verified/mobile-review.png', fullPage: true });
+  await page.selectOption('#zoom', '2');
+  await expect.poll(async () => (await page.locator('canvas').boundingBox())!.width).toBeGreaterThan(1000);
+  await page.selectOption('#zoom', '1');
+  await expect.poll(async () => (await page.locator('canvas').boundingBox())!.width).toBeLessThanOrEqual(390);
+});
+
+test('Venusaur: original eight directions, petals, lob, roots and pause cleanup', async ({ page }) => {
+  const errors = captureErrors(page); await open(page); await page.locator('[data-species="venusaur"]').click(); await prepared(page,'venusaur');
+  for (let row=0;row<8;row++) {
+    await page.evaluate(row=>{const a=(window as any).__arena,s=a.getState();s.fighters[0].facing={x:Math.cos(Math.PI/2-row*Math.PI/4),y:Math.sin(Math.PI/2-row*Math.PI/4)};a.setState(s);},row);
+    await advance(page,.02);const f=(await frames(page))[0];expect(f.direction).toBe(row);expect(f.placeholder).toBe(false);
+  }
+  await page.evaluate(()=>{const a=(window as any).__arena,s=a.getState();s.fighters[0].facing={x:1,y:0};s.fighters[1].pos={x:535,y:312};a.setState(s);});
+  await advance(page,.02,{...idle,ranged:true});await advance(page,.45);
+  expect((await state(page)).fighters[1].hp).toBe(100);
+  expect((await page.evaluate(()=>(window as any).__arena.getVfx())).draws.some((d:any)=>d.clip==='seed')).toBe(true);
+  const frozen=await state(page);await page.waitForTimeout(100);expect((await state(page)).plantAttacks).toEqual(frozen.plantAttacks);
+  await advance(page,.5);expect((await state(page)).fighters[1].hp).toBe(76);
+  await prepared(page,'venusaur');await advance(page,.02,{...idle,special:true});await advance(page,.9);
+  expect((await page.evaluate(()=>(window as any).__arena.getVfx())).draws.some((d:any)=>d.clip==='roots')).toBe(true);
+  await page.screenshot({path:'docs/pokemon/0003-venusaur/roots-game.png'});
+  await prepared(page,'venusaur');expect((await state(page)).plantAttacks).toEqual([]);
+  await advance(page,.02,{...idle,melee:true});await advance(page,.2);
+  expect((await page.evaluate(()=>(window as any).__arena.getVfx())).draws.some((d:any)=>d.clip==='petal')).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test('Venusaur real keyboard, mouse, help and short touch cast', async ({ browser, page }) => {
+  test.setTimeout(60_000);
+  await open(page);await page.locator('[data-opponent]').selectOption('venusaur');await page.locator('[data-species="venusaur"]').click();
+  expect((await state(page)).fighters[1].species).toBe('venusaur');
+  await page.keyboard.press('k');await expect.poll(async()=>(await state(page)).plantAttacks.some((a:any)=>a.owner===0&&a.kind==='bomb')).toBe(true);
+  await page.locator('[data-help]').click();await expect(page.locator('[data-help-content]')).toContainText('하드플랜트');await expect(page.locator('[data-help-content]')).toContainText('24');
+  const time=(await state(page)).time;await page.waitForTimeout(100);expect((await state(page)).time).toBe(time);await page.locator('[data-help-close]').click();
+  await page.evaluate(()=>{const a=(window as any).__arena,s=a.getState();s.fighters[0].rangedCooldown=0;s.fighters[0].phase='idle';s.fighters[0].action='none';s.fighters[0].stunTime=0;s.fighters[0].knockdownTime=0;s.fighters[0].energy=100;s.fighters[1].specialCooldown=99;s.fighters[1].rangedCooldown=99;s.fighters[1].meleeCooldown=99;a.setState(s);});
+  const box=(await page.locator('canvas').boundingBox())!;await page.mouse.move(box.x+box.width*.65,box.y+box.height*.4);await page.mouse.down();
+  await expect.poll(async()=>(await state(page)).fighters[0].rangedCooldown).toBeGreaterThan(.3);await page.mouse.up();
+  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const mobile=await context.newPage();await open(mobile);await mobile.locator('[data-species="venusaur"]').tap();
+  await expect(mobile.locator('[data-action="ranged"]')).toContainText('씨폭탄');await mobile.locator('[data-action="ranged"]').tap();
+  await expect.poll(async()=>(await state(mobile)).plantAttacks.some((a:any)=>a.owner===0&&a.kind==='bomb')).toBe(true);
+  await mobile.screenshot({path:'docs/pokemon/0003-venusaur/mobile.png',fullPage:true});await context.close();
 });

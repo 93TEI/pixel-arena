@@ -1,4 +1,60 @@
 {
+  "roots": {
+    "file": "roots.png",
+    "frameWidth": 80,
+    "frameHeight": 80,
+    "columns": 46,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Frenzy_Plant.None.png",
+    "sha256": "d763117c16ce934814bee25d9e0d70a096df3725596ee9344ac49ce173b505e4"
+  },
+  "petalBack": {
+    "file": "petalBack.png",
+    "frameWidth": 88,
+    "frameHeight": 88,
+    "columns": 54,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Petal_Dance_Back.None.png",
+    "sha256": "f5e5bb10980c342f944c70004d2c019949243c3c517a6498b7765633f5d63f3b"
+  },
+  "petalFront": {
+    "file": "petalFront.png",
+    "frameWidth": 88,
+    "frameHeight": 88,
+    "columns": 54,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Petal_Dance_Front.None.png",
+    "sha256": "94589dd477e723c4069da147463da6b6670bfa5fef9e38d6aff9038f81362938"
+  },
+  "petal": {
+    "file": "petal.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "columns": 8,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Petal_Dance_Flower_Pink.None.png",
+    "sha256": "f3c8a784cc2972b5c48c03232fbec8a06ff5f61264c9fe74c042986f03689900"
+  },
   "fireBack": {
     "file": "fireBack.png",
     "frameWidth": 96,
@@ -10,7 +66,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Back.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Back.None.png",
+    "sha256": "ef46a42b17835c7b750c1bd7a12f02d4b40a37582fda235ba05f44b4094ed540"
   },
   "fireFront": {
     "file": "fireFront.png",
@@ -23,7 +80,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Front.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Magma_Storm_Front.None.png",
+    "sha256": "0049bb20b0d9b2302ffebd074bf22c7170d20fa527845376a5f282ed9aec2146"
   },
   "ember": {
     "file": "ember.png",
@@ -36,7 +94,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Ember.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Ember.None.png",
+    "sha256": "2875d15af0d787a2185f359679f5a120d14cc63687c5a88e4a3811e2145ad76d"
   },
   "flame": {
     "file": "flame.png",
@@ -49,7 +108,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Flamethrower.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Flamethrower.None.png",
+    "sha256": "cdf854eb86da7cccaa4650a7e892f096e0bf0ccbc69512d2ae31bd9f895ffa74"
   },
   "fireBall": {
     "file": "fireBall.png",
@@ -62,7 +122,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Fire_Spin_Fireball.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Fire_Spin_Fireball.None.png",
+    "sha256": "a84c5f5c3f35f43533e1075ec5247289c48f489831ef548d339e6aca651615fe"
   },
   "waterWave": {
     "file": "waterWave.png",
@@ -75,7 +136,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Aqua_Tail_Wave.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Aqua_Tail_Wave.None.png",
+    "sha256": "e79e0d6fa3102effb84c068fb6a47fe798e2daa2a43d692d0085abede7172515"
   },
   "waterSplash": {
     "file": "waterSplash.png",
@@ -88,7 +150,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Splash.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Splash.None.png",
+    "sha256": "9edfb7f0262f2d7e126c1323fe96873ad24b422191df4e07e718d7acca5c32d0"
   },
   "waterDrop": {
     "file": "waterDrop.png",
@@ -101,7 +164,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Drop.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Water_Spout_Drop.None.png",
+    "sha256": "b15b5abcd7b6025fa55b7b6e7895b8a8430116cf5500b7649c8a44c69b93b4f5"
   },
   "waterHit": {
     "file": "waterHit.png",
@@ -114,7 +178,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Brine_Splashes.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Brine_Splashes.None.png",
+    "sha256": "f22705f0b6f77c0855f0b1c6c732f608162bcd3d8dd08af212cfd752976b1497"
   },
   "bubble": {
     "file": "bubble.png",
@@ -127,7 +192,22 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Bubble_Pop_Blue.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Bubble_Pop_Blue.None.png",
+    "sha256": "468581362d497d172963fc1938a954208e0d3764852ea3abb0dd00b73d173296"
+  },
+  "waterFlow": {
+    "file": "waterFlow.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 4,
+    "rows": 1,
+    "fps": 20,
+    "origin": [
+      0.5,
+      0.5
+    ],
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hydro_Pump_RSE.Dir1.png",
+    "sha256": "74f4bc2a13d2b9ccec4497bdb70bdadfe58e34584d56848702de1953c5d944ed"
   },
   "leaf": {
     "file": "leaf.png",
@@ -140,7 +220,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf.None.png",
+    "sha256": "4e0a060cd0b3628e43dc1fb378db413886b9a23d86594797ff4cf5e7d02fea31"
   },
   "leafSpin": {
     "file": "leafSpin.png",
@@ -153,7 +234,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Leaf_Rotating.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Leaf_Rotating.None.png",
+    "sha256": "16a909f5e8907e647f0f0f035687d9bcb927b7c089043105505e45d007b0ff3d"
   },
   "leafCharge": {
     "file": "leafCharge.png",
@@ -166,7 +248,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf_Charge.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Razor_Leaf_Charge.None.png",
+    "sha256": "19665a7a1d9b7a5cd333381898c130c62b00d3993c48c31daaa06176af3c435d"
   },
   "seed": {
     "file": "seed.png",
@@ -179,7 +262,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Seed_RSE.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Seed_RSE.None.png",
+    "sha256": "05b9bceb93f93d38f5ec43b74521ae9a95e9d9d15bc9bb9a86a1f6cc5521d1ad"
   },
   "sprout": {
     "file": "sprout.png",
@@ -192,7 +276,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leech_Seed_Sprout.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leech_Seed_Sprout.None.png",
+    "sha256": "fb9255ee977dd85e036d7915c3e9f2748042937c5fd4fec1ff49c63059a11ce3"
   },
   "vine": {
     "file": "vine.png",
@@ -205,7 +290,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip.Dir1.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip.Dir1.png",
+    "sha256": "4532648663f05f7f3b4616d203b8ff7a9856c61b2bc14b2b9bb5ba92c8ee5a06"
   },
   "vineHit": {
     "file": "vineHit.png",
@@ -218,7 +304,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip_2.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vine_Whip_2.None.png",
+    "sha256": "9b14b4afcf8073fd3d3744f22153bc323a5a3b56ea50c83999f20b525b51c357"
   },
   "solarCharge": {
     "file": "solarCharge.png",
@@ -231,7 +318,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Charge.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Charge.None.png",
+    "sha256": "a4221515f57da60ba0c6cffc0858c8515b7c300a365bae434a377311ad5d3f94"
   },
   "solarMote": {
     "file": "solarMote.png",
@@ -244,7 +332,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Particle.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Solar_Beam_Particle.None.png",
+    "sha256": "068fb0a6dbdd32ed67d7eab4c6be749897bc348abcd78797dbf5371a5c91f2ae"
   },
   "absorb": {
     "file": "absorb.png",
@@ -257,7 +346,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Absorb.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Absorb.None.png",
+    "sha256": "e204f3731ee07915e501657abab5d96d901d22282279a51badf71e3aad08f275"
   },
   "scratch": {
     "file": "scratch.png",
@@ -270,7 +360,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Scratch.Dir1.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Scratch.Dir1.png",
+    "sha256": "54ed603821c836df08db212fb73ba5a4bce8c6235fd4316127b3ee380187111c"
   },
   "hit": {
     "file": "hit.png",
@@ -283,7 +374,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Neutral.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Neutral.None.png",
+    "sha256": "6db334999c61b4791c31466cb6bdd0a57f72b49e3a50d66ca51a1b7c2b643f8e"
   },
   "heavyHit": {
     "file": "heavyHit.png",
@@ -296,7 +388,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Super_Effective.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Hit_Super_Effective.None.png",
+    "sha256": "17c84832c01d2f2eb1599757ffd5a6eaaab794398f776164031653b2d256c54b"
   },
   "electric": {
     "file": "electric.png",
@@ -309,7 +402,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge.None.png",
+    "sha256": "1c5cb9cf2e02a10e1ee4f840c01d0f2a0fb30be3580ec375a794b2b405ed98ed"
   },
   "electricHit": {
     "file": "electricHit.png",
@@ -322,7 +416,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge_Hit.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Discharge_Hit.None.png",
+    "sha256": "73686dd59f8029fa47f469fbf525f8a0e19bc0a3684d8a20a773e20ec464ab35"
   },
   "spark": {
     "file": "spark.png",
@@ -335,7 +430,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Spark.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Spark.None.png",
+    "sha256": "bdd600a4c96b182a95ee375c7aa87a8c52fbba4a4c0056dd4685a53f73ec368e"
   },
   "charge": {
     "file": "charge.png",
@@ -348,7 +444,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Charge_Up.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Charge_Up.None.png",
+    "sha256": "01d566c889e24f1851937f5cc36e8b8eb5530196087a3703d49b176b005deb2a"
   },
   "psychicCharge": {
     "file": "psychicCharge.png",
@@ -361,7 +458,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psych_Up.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psych_Up.None.png",
+    "sha256": "a03f4b6ede8f32b0fb326654c45f722a270535bb0049b3f0275478c17525f18b"
   },
   "psychicHit": {
     "file": "psychicHit.png",
@@ -374,7 +472,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Shift_Hit.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Shift_Hit.None.png",
+    "sha256": "f9c2788147b26967fafc81260cd9a55433758d4ebbab5eacad1540df90812df8"
   },
   "psychicBack": {
     "file": "psychicBack.png",
@@ -387,7 +486,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Back.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Back.None.png",
+    "sha256": "dbf4d72b2f476c4ea3365c4485c925b57a0fc6d23db0bda565974109cfbc8c97"
   },
   "psychicFront": {
     "file": "psychicFront.png",
@@ -400,7 +500,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Front.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Psycho_Boost_Front.None.png",
+    "sha256": "334fc7ffa7fe8fff3535e284726837791e6fc20dffb563c0db25a8baec26fdf0"
   },
   "psychicWave": {
     "file": "psychicWave.png",
@@ -413,7 +514,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Wave_Circle_Purple.Dir5.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Wave_Circle_Purple.Dir5.png",
+    "sha256": "3aa6c709a7b95e9ca80b2ba54c54c6a2ed3eb54d961b7a77e8191d7437e72905"
   },
   "rock": {
     "file": "rock.png",
@@ -426,7 +528,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Rock_Piece_Rotating.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Rock_Piece_Rotating.None.png",
+    "sha256": "6c176cfef9b99344db806aac34873b9cf364ffd7514e6d8e6feebd133e9eb07b"
   },
   "dust": {
     "file": "dust.png",
@@ -439,7 +542,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_Brown.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_Brown.None.png",
+    "sha256": "36653d6d900c5249e139bb3d4bfa0c3c3188618a90d61378855b7fc7b961fd7d"
   },
   "steam": {
     "file": "steam.png",
@@ -452,7 +556,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_White.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Puff_White.None.png",
+    "sha256": "603018a5b6592b0f529394119bbe33d5d67988f9978d0c467df4d0de7202107e"
   },
   "dash": {
     "file": "dash.png",
@@ -465,7 +570,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vacuum_Wave_Dust.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Vacuum_Wave_Dust.None.png",
+    "sha256": "98c20588b488f73946b6cbd77bb0760dd9c7a9da2fdf7a61aa8e4abf53030935"
   },
   "impact": {
     "file": "impact.png",
@@ -478,7 +584,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Force_Palm_Hit.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Force_Palm_Hit.None.png",
+    "sha256": "7301312f2af3a34fe7200ee354d5f2fd9aa5dfcb9cb97786a1288775d7afebd4"
   },
   "grassHit": {
     "file": "grassHit.png",
@@ -491,7 +598,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Hit.None.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Particle/Leaf_Storm_Hit.None.png",
+    "sha256": "fde8601381c43383ab850cfa2a4a148998f370558e3a84b213689aebca7ef7a7"
   },
   "waterBody": {
     "file": "water-Body.png",
@@ -504,7 +612,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Body.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Body.png",
+    "sha256": "6133e7b7544427b2116db3809f01d331441b32f58526925193658fb9f9ac2667"
   },
   "waterHead": {
     "file": "water-Head.png",
@@ -517,7 +626,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Head.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Head.png",
+    "sha256": "6758c89a9dc7ed53b4dd8136446398766ba74c733e2cf4ebb28a9540cd612ed0"
   },
   "waterTail": {
     "file": "water-Tail.png",
@@ -530,7 +640,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Tail.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Blue/Tail.png",
+    "sha256": "50ec20bc7744df72b1f60f4cd5b5509a0a3b8ca99ddd7c64a270b27e75f5007d"
   },
   "solarBody": {
     "file": "solar-Body.png",
@@ -543,7 +654,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Body.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Body.png",
+    "sha256": "0487b28a1939bb08c677f54f49ed38b099e731f5b1b3f24db8e909c1cff74c02"
   },
   "solarHead": {
     "file": "solar-Head.png",
@@ -556,7 +668,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Head.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Head.png",
+    "sha256": "f4235573a697b61ef96cf5c5c194f6898bd9fdc9a059e5b0872c02a39285835b"
   },
   "solarTail": {
     "file": "solar-Tail.png",
@@ -569,7 +682,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Tail.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Beam/Tail.png",
+    "sha256": "981ad783ed267614dc3310571140b26a29fab9e795c105086352638ef09cdb1e"
   },
   "lightningBody": {
     "file": "lightning-Body.png",
@@ -582,7 +696,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Body.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Body.png",
+    "sha256": "db252b3f73d3d7d2b26aff79695da8ee65a68b5dfcc80dd659177dcdd2a667ff"
   },
   "lightningHead": {
     "file": "lightning-Head.png",
@@ -595,7 +710,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Head.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Head.png",
+    "sha256": "ad5507d242139eef9c3e9d6997f14f1d003eb6a34c486c5eaadb47e1bf812381"
   },
   "lightningTail": {
     "file": "lightning-Tail.png",
@@ -608,7 +724,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Tail.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Lightning/Tail.png",
+    "sha256": "98b591328e9e4bb53a3e5383f74c52539e76d2cc20355f76bf8ddc7eab1b79fd"
   },
   "psychicBody": {
     "file": "psychic-Body.png",
@@ -621,7 +738,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Body.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Body.png",
+    "sha256": "e0c7f45af9f7bea9e441f083811fff7275dd455aa344d0fd6d1303342adcc5b2"
   },
   "psychicHead": {
     "file": "psychic-Head.png",
@@ -634,7 +752,8 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Head.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Head.png",
+    "sha256": "8c37d9bff11812cca479ed9ff5302eed7b06c09c88dfc32b030a523c78246e3d"
   },
   "psychicTail": {
     "file": "psychic-Tail.png",
@@ -647,6 +766,7 @@
       0.5,
       0.5
     ],
-    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Tail.png"
+    "source": "https://raw.githubusercontent.com/PMDCollab/RawAsset/03c80dad937911572f8fb19903771a47956fc696/Beam/Column_Purple/Tail.png",
+    "sha256": "50ec20bc7744df72b1f60f4cd5b5509a0a3b8ca99ddd7c64a270b27e75f5007d"
   }
 }

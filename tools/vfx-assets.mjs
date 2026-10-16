@@ -2,10 +2,11 @@
 export const revision = '03c80dad937911572f8fb19903771a47956fc696';
 export const origin = `https://raw.githubusercontent.com/PMDCollab/RawAsset/${revision}`;
 export const particles = {
+  roots: 'Frenzy_Plant.None', petalBack: 'Petal_Dance_Back.None', petalFront: 'Petal_Dance_Front.None', petal: 'Petal_Dance_Flower_Pink.None',
   fireBack: 'Magma_Storm_Back.None', fireFront: 'Magma_Storm_Front.None',
   ember: 'Ember.None', flame: 'Flamethrower.None', fireBall: 'Fire_Spin_Fireball.None',
   waterWave: 'Aqua_Tail_Wave.None', waterSplash: 'Water_Spout_Splash.None', waterDrop: 'Water_Spout_Drop.None',
-  waterHit: 'Brine_Splashes.None', bubble: 'Bubble_Pop_Blue.None',
+  waterHit: 'Brine_Splashes.None', bubble: 'Bubble_Pop_Blue.None', waterFlow: 'Hydro_Pump_RSE.Dir1',
   leaf: 'Razor_Leaf.None', leafSpin: 'Leaf_Storm_Leaf_Rotating.None', leafCharge: 'Razor_Leaf_Charge.None',
   seed: 'Seed_RSE.None', sprout: 'Leech_Seed_Sprout.None', vine: 'Vine_Whip.Dir1', vineHit: 'Vine_Whip_2.None',
   solarCharge: 'Solar_Beam_Charge.None', solarMote: 'Solar_Beam_Particle.None', absorb: 'Absorb.None',

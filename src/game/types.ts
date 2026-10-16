@@ -1,4 +1,4 @@
-export type Species = 'bulbasaur' | 'ivysaur' | 'charmander' | 'squirtle' | 'pikachu' | 'mewtwo';
+export type Species = 'bulbasaur' | 'ivysaur' | 'venusaur' | 'charmander' | 'squirtle' | 'pikachu' | 'mewtwo';
 export interface Vec { x: number; y: number }
 export interface Command { move: Vec; aim?: Vec; melee: boolean; ranged: boolean; rangedHeld?: boolean; dodge: boolean; special?: boolean }
 export type FighterAction = 'none' | 'melee' | 'ranged' | 'special' | 'dodge';
@@ -16,8 +16,9 @@ export interface Clash { pos: Vec; intensity: number; age: number }
 export interface Obstacle { id: number; kind: 'crate' | 'rock'; pos: Vec; radius: number; hp: number; maxHp: number }
 export interface Hazard { id: number; owner: number; species: Species; pos: Vec; radius: number; life: number; maxLife: number; warmup: number; damageTimer: number }
 export interface GroundMark { id: number; kind: 'scorch' | 'crater' | 'wet'; pos: Vec; radius: number; life: number; angle: number }
+export interface PlantAttack { id: number; owner: number; kind: 'bomb' | 'roots'; origin: Vec; points: Vec[]; age: number; power: number; hit: boolean; resolved: number }
 export interface BattleState { fighters: [Fighter, Fighter]; projectiles: Projectile[]; effects: Effect[]; time: number; winner: number | null; nextId: number; seed: number;
-  beams: Beam[]; clash: Clash | null; obstacles: Obstacle[]; hazards: Hazard[]; groundMarks: GroundMark[]; cameraImpact: number; leechSeeds: LeechSeed[];
+  beams: Beam[]; clash: Clash | null; obstacles: Obstacle[]; hazards: Hazard[]; groundMarks: GroundMark[]; cameraImpact: number; leechSeeds: LeechSeed[]; plantAttacks: PlantAttack[];
 }
 export const WORLD = { width: 960, height: 600, left: 84, right: 876, top: 88, bottom: 530 };
 export const emptyCommand = (): Command => ({ move: { x: 0, y: 0 }, melee: false, ranged: false, dodge: false });
